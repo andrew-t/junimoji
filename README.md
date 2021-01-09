@@ -8,6 +8,8 @@ The clues tell you what letters are in each subgrid, and are in order. The aim i
 
 # Using this tool
 
+[Open the tool](https://github.andrewt.net/junimoji/).
+
 ## Setting
 
 Enter the dimensions of the grid, leave the checkbox empty, and hit start. Click the grid, and use the arrow keys to move. Type letters into the boxes, use backspace to empty a box and space to make it black (or stop it being black). The clues will appear on the right hand side. Click "link to solve" to get a playable version.
