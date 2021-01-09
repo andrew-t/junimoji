@@ -18,10 +18,16 @@ The tool won't check your words are real or that the grid follows the rules but 
 
 ## Solving from scratch
 
-As above, but you have to type the clues yourself before you start.
+Enter the dimensions of the grid, check the checkbox, and hit start. Enter the clues on the right hand side.
+
+Click the grid, and use the arrow keys to move. Type letters into the boxes, use backspace to empty a box and space to make it black (or stop it being black).
 
 The tool won't check your words are real, that you have the solution the setter intended, or that the grid follows the rules but will handle the rotation for you and will cross off clues where all the letters have been entered validly.
 
 ## Solving from a link
 
-As above, but the initial form is bypassed and the clues are entered for you. You can generate links with the setting tool or just type them in, the format is fairly easily deciphered.
+Open [a Junimoji puzzle link](https://github.andrewt.net/junimoji/#3,3,3,3,README,LITN,YCAUMUD,EPSATT,UIRIN,DCALHY,EGGEAMS,FILE,UNRNCE).
+
+Enter the dimensions of the grid, check the checkbox, and hit start. Click the grid, and use the arrow keys to move. Type letters into the boxes, use backspace to empty a box and space to make it black (or stop it being black).
+
+The tool won't check your words are real, that you have the solution the setter intended, or that the grid follows the rules but will handle the rotation for you and will cross off clues where all the letters have been entered validly.
