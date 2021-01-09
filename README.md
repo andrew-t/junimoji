@@ -31,3 +31,13 @@ Open [a Junimoji puzzle link](https://github.andrewt.net/junimoji/#3,3,3,3,READM
 Click the grid, and use the arrow keys to move. Type letters into the boxes, use backspace to empty a box and space to make it black (or stop it being black).
 
 The tool won't check your words are real, that you have the solution the setter intended, or that the grid follows the rules but will handle the rotation for you and will cross off clues where all the letters have been entered validly.
+
+# Making a link to solve from
+
+## Making a puzzle from scratch
+
+See the "setting" section above — when you set a puzzle you can create a link to solve it from the UI.
+
+## From someone else's puzzle
+
+See the "solving" section above — when you have entered the clues the "link to solve" should appear. You don't have to use it when solving but it might save someone else entering all the clues.
