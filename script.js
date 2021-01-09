@@ -54,6 +54,8 @@ function start() {
 		el.setAttribute('required', true);
 		if (setting || preset) el.setAttribute('disabled', true);
 		clues.push(el);
+		if (solving && !preset)
+			el.addEventListener('change', updateLink);
 	}
 	for (let xi = 0; xi < totalWidth; ++xi)
 		cells[xi] = [];
@@ -142,9 +144,11 @@ function render() {
 		} else
 			clue.value = txt.toUpperCase();
 	}
-	if (setting) {
-		document.getElementById('permalink').setAttribute('href', `#${subGridWidth},${subGridHeight},${subGridsAcross},${subGridsDown},${clues.map(c => c.value).join(',')}`);
-	}
+	if (setting) updateLink();
+}
+
+function updateLink() {
+	document.getElementById('permalink').setAttribute('href', `#${subGridWidth},${subGridHeight},${subGridsAcross},${subGridsDown},${clues.map(c => c.value).join(',')}`);
 }
 
 function inputInt(id) {
