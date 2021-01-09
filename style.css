@@ -1,0 +1,78 @@
+label { display: block; }
+.hidden { display: none; }
+
+#before {
+	font-family: sans-serif;
+}
+#before label span {
+	width: 10em;
+	display: inline-block;
+}
+#before label input[type=checkbox] {
+	margin-right: 1em;
+}
+
+table {
+	border-collapse: collapse;
+	display: inline-block;
+}
+#grid td {
+	border: 1px solid black;
+	width: 2rem;
+	height: 2rem;
+	font-family: sans-serif;
+	font-size: 1.5rem;
+	text-align: center;
+}
+
+#grid td.block {
+	background: #444;
+}
+
+#grid td:focus {
+	box-shadow: 0 0 0 2px inset blue;
+}
+
+#grid td.checker {
+	background: #fdd;
+}
+#grid td.checker.block {
+	background: #800;
+}
+#grid td.top { border-top: 2px solid black; }
+#grid td.bottom { border-bottom: 2px solid black; }
+#grid td.left { border-left: 2px solid black; }
+#grid td.right { border-right: 2px solid black; }
+
+#clues {
+	display: inline-block;
+	vertical-align: top;
+	font-family: sans-serif;
+}
+
+#clues input {
+	font-family: Consolas, 'Droid Mono', Monaco, 'Roboto Mono', monospace;
+	text-transform: uppercase;
+	font-size: 1.5em;
+}
+#clues input:invalid {
+	border: 1px solid red;
+}
+#clues input:disabled {
+	background: white;
+	color: black;
+}
+#clues input:not(:invalid) {
+	border: 1px solid transparent;
+}
+#clues input.current {
+	font-weight: bold;
+	background: #FFD;
+}
+#clues input.correct {
+	text-decoration: line-through;
+	opacity: 0.6;
+}
+
+#permalink { display: none; }
+#permalink[href^="#"] { display: block; }
