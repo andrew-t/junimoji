@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+	<title>github.andrewt.net / Junimoji</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 	<form id="before">
-		<label><span>Subgrid width</span><input id="subgrid-width" type="number" value="3"></label>
-		<label><span>Subgrid height</span><input id="subgrid-height" type="number" value="3"></label>
-		<label><span>Subgrids across</span><input id="subgrids-across" type="number" value="3"></label>
-		<label><span>Subgrids down</span><input id="subgrids-down" type="number" value="3"></label>
+		<label><span>Subgrid width</span><input id="subgrid-width" type="number" value="3" min="0"></label>
+		<label><span>Subgrid height</span><input id="subgrid-height" type="number" value="3" min="0"></label>
+		<label><span>Subgrids across</span><input id="subgrids-across" type="number" value="3" min="0"></label>
+		<label><span>Subgrids down</span><input id="subgrids-down" type="number" value="3" min="0"></label>
 		<label><input type="checkbox" id="solve"><span>Solve (rather than set)</span></label>
 		<button>Start</button>
 	</form>
-	<table><tbody id="grid"></tbody></table>
-	<ol id="clues">
-	</ol>
+	<div id="main">
+		<table><tbody id="grid"></tbody></table>
+		<ol id="clues">
+		</ol>
+	</div>
 	<a href="" id="permalink" target="_blank">Link to solve</a>
+	<a href="https://github.com/andrew-t/junimoji/">Source code and readme</a>
 	<script type="module" src="script.js"></script>
 </body>
 </html>

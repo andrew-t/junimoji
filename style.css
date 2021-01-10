@@ -1,6 +1,11 @@
 label { display: block; }
 .hidden { display: none; }
 
+#main {
+	display: flex;
+	width: 100%;
+}
+
 #before {
 	font-family: sans-serif;
 }
@@ -45,9 +50,16 @@ table {
 #grid td.right { border-right: 2px solid black; }
 
 #clues {
-	display: inline-block;
+	display: flex;
 	vertical-align: top;
 	font-family: sans-serif;
+	flex-direction: column;
+	flex: 1;
+	height: 100vh;
+	flex-wrap: wrap;
+}
+#clues li {
+	width: 10em;
 }
 
 #clues input {
