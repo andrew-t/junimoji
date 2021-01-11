@@ -55,17 +55,19 @@ table {
 	font-family: sans-serif;
 	flex-direction: column;
 	flex: 1;
-	height: 100vh;
+	height: calc(100vh - 2em);
 	flex-wrap: wrap;
-}
-#clues li {
-	width: 10em;
+	margin: 0;
+	padding: 0 0 0 4rem;
+	align-content: stretch;
+	align-items: stretch;
 }
 
 #clues input {
 	font-family: Consolas, 'Droid Mono', Monaco, 'Roboto Mono', monospace;
 	text-transform: uppercase;
 	font-size: 1.5em;
+	width: calc(100% - 4rem);
 }
 #clues input:invalid {
 	border: 1px solid red;
@@ -83,7 +85,7 @@ table {
 }
 #clues input.correct {
 	text-decoration: line-through;
-	opacity: 0.6;
+	opacity: 0.4;
 }
 
 #permalink { display: none; }
