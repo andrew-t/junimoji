@@ -86,7 +86,7 @@ table {
 }
 
 #clues li {
-	width: 5em;
+	width: 12em;
 }
 #clues input {
 	font-family: Consolas, 'Droid Mono', Monaco, 'Roboto Mono', monospace;
