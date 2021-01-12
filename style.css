@@ -56,6 +56,7 @@ table {
 
 #grid td:focus {
 	box-shadow: 0 0 0 2px inset blue;
+	outline: none;
 }
 
 #grid td.checker {
