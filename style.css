@@ -1,13 +1,29 @@
 label { display: block; }
 .hidden { display: none; }
 
+body {
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+#main, #before {
+	position: absolute;
+	left: 1em;
+	top: 1em;
+	width: calc(100vw - 2em);
+	height: calc(100vh - 2em);
+}
+
 #main {
-	display: flex;
-	width: 100%;
+	display: grid;
+	grid-template-columns: auto 1fr;
+	grid-template-rows: 1fr auto;
 }
 
 #before {
 	font-family: sans-serif;
+	z-index: 1000;
 }
 #before label span {
 	width: 10em;
@@ -20,6 +36,8 @@ label { display: block; }
 table {
 	border-collapse: collapse;
 	display: inline-block;
+	grid-column: 1 / span 1;
+	grid-row: 1 / span 1;
 }
 #grid td {
 	border: 1px solid black;
@@ -57,7 +75,8 @@ table {
 	vertical-align: top;
 	font-family: sans-serif;
 	flex-direction: column;
-	flex: 1;
+	grid-column: 2 / span 1;
+	grid-row: 1 / span 2;
 	height: calc(100vh - 2em);
 	flex-wrap: wrap;
 	margin: 0;
@@ -66,6 +85,9 @@ table {
 	align-items: stretch;
 }
 
+#clues li {
+	width: 5em;
+}
 #clues input {
 	font-family: Consolas, 'Droid Mono', Monaco, 'Roboto Mono', monospace;
 	text-transform: uppercase;
@@ -97,3 +119,8 @@ table {
 
 #permalink { display: none; }
 #permalink[href^="#"] { display: block; }
+
+#chrome {
+	grid-column: 1 / span 1;
+	grid-row: 2 / span 1;
+}
