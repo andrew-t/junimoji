@@ -82,6 +82,37 @@ function start() {
 			cell.el.addEventListener('blur', e => clues[cell.subgrid]?.classList.remove('current'));
 		}
 	}
+	const canvas = document.createElement('canvas');
+	canvas.width = 200;
+	canvas.height = 200;
+	const ctx = canvas.getContext('2d');
+	ctx.font = "100px sans-serif";
+	ctx.transform(0.6, 0, 0, 1, 40, 0);
+	ctx.textAlign = 'center';
+	for (let x = 0; x < subGridsAcross; ++x)
+		for (let y = 0; y < subGridsDown; ++y) {
+			const check = ((x ^ y) & 1);
+			ctx.fillStyle = check ? '#FDD' : '#FFF';
+			ctx.fillRect(-1, -2, 202, 202);
+			ctx.fillStyle = check ? '#FFF' : '#FDD';
+			ctx.fillText(x + y * subGridsAcross + 1, 100, 135, 200);
+			const img = canvas.toDataURL();
+			for (let u = 0; u < subGridWidth; ++u)
+				for (let v = 0; v < subGridHeight; ++v) {
+					const xx = (u - subGridWidth / 2) * 2,
+						yy = (v - subGridHeight / 2) * 2;
+					Object.assign(cells[x * subGridWidth + u][y * subGridHeight + v].el.style, {
+						backgroundImage: `url(${img})`,
+						backgroundScale: `
+							calc(${subGridWidth * 2}rem + ${subGridWidth - 1}px)
+							calc(${subGridHeight * 2}rem + ${subGridHeight - 1}px)`,
+						backgroundPosition: `
+							calc(${-100 - xx}px - ${xx}rem)
+							calc(${-100 - yy}px - ${yy}rem)`
+					});
+
+				}
+		}
 }
 
 function cellKey(cell) {
@@ -136,13 +167,24 @@ function render() {
 		let txt = '';
 		for (const cell of clue.cells)
 			if (cell.letter && !cell.block)
-				txt += cell.letter;
+				txt += cell.letter.toUpperCase();
 		if (solving) {
-			if (txt.toUpperCase() == clue.value.toUpperCase())
+			if (txt == clue.value.toUpperCase())
 				clue.classList.add('correct');
 			else clue.classList.remove('correct');
+			if (mightBe(txt, clue.value.toUpperCase()))
+				clue.classList.remove('wrong');
+			else clue.classList.add('wrong');
 		} else
 			clue.value = txt.toUpperCase();
+	}
+	if (solving) {
+		const p = cells.reduce(
+			(a, b) => b.reduce(
+				(a, b) => (b.block || b.letter) ? a + 1 : a,
+				a),
+			0) / (totalWidth * totalHeight);
+		document.getElementById('progress').innerHTML = `${Math.floor(p * 100)}% complete`;
 	}
 	if (setting) updateLink();
 }
@@ -159,4 +201,14 @@ function addEl(parent, tag) {
 	const el = document.createElement(tag);
 	parent.appendChild(el);
 	return el;
+}
+
+function mightBe(guess, clue) {
+	guess = guess.split('');
+	while (guess.length) {
+		const i = clue.indexOf(guess.shift());
+		if (i < 0) return false;
+		clue = clue.substr(i + 1);
+	}
+	return true;
 }
