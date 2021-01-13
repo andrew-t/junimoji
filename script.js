@@ -41,12 +41,24 @@ if (window.location.hash) {
 	start();
 	for (const clue of clues)
 		clue.value = c[clue.i];
+	const progress = c[clues.length];
+	if (progress)
+		for (let x = 0; x < totalWidth; ++x)
+			for (let y = 0; y < totalHeight; ++y) {
+				const p = progress[x + y * totalWidth];
+				if (p == '=') cells[x][y].block = true;
+				else if (/[A-Z]/i.test(p)) cells[x][y].letter = p;
+			}
 	render();
 }
 
 function start() {
 	console.log('Starting...', { subGridWidth, subGridHeight, subGridsAcross, subGridsDown });
 	preForm.classList.add('hidden');
+	if (!solving) {
+		document.getElementById('progress').classList.add('hidden');
+		document.getElementById('progress-link').classList.add('hidden');
+	}
 	for (let i = 0; i < subGridsAcross * subGridsDown; ++i) {
 		const el = addEl(addEl(clueList, 'li'), 'input');
 		el.i = i;
@@ -185,12 +197,22 @@ function render() {
 				a),
 			0) / (totalWidth * totalHeight);
 		document.getElementById('progress').innerHTML = `${Math.floor(p * 100)}% complete`;
+		let l = '';
+		for (let y = 0; y < totalHeight; ++y)
+			for (let x = 0; x < totalWidth; ++x)
+				l += cells[x][y].block ? '=' : (cells[x][y].letter || '-');
+		updateLink();
+		document.getElementById('progress-link').setAttribute('href', `${getHash()},${l}`);
 	}
 	if (setting) updateLink();
 }
 
+function getHash() {
+	return `#${subGridWidth},${subGridHeight},${subGridsAcross},${subGridsDown},${clues.map(c => c.value).join(',')}`;
+}
+
 function updateLink() {
-	document.getElementById('permalink').setAttribute('href', `#${subGridWidth},${subGridHeight},${subGridsAcross},${subGridsDown},${clues.map(c => c.value).join(',')}`);
+	document.getElementById('permalink').setAttribute('href', getHash());
 }
 
 function inputInt(id) {
