@@ -161,6 +161,9 @@ function cellKey(cell) {
 				cell.letter = null;
 				e.preventDefault();
 				break;
+			case 'Enter':
+				cells[totalWidth - cell.x - 1][totalHeight - cell.y - 1].el.focus();
+				break;
 			default:
 				if (/^[A-Z]$/i.test(e.key)) {
 					cell.letter = e.key.toUpperCase();
