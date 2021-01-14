@@ -90,8 +90,14 @@ function start() {
 			if (yi % subGridHeight == 0) cell.el.classList.add('top');
 			if (yi % subGridHeight == subGridHeight - 1) cell.el.classList.add('bottom');
 			if (((xi / subGridWidth) ^ (yi / subGridHeight)) & 1) cell.el.classList.add('checker');
-			cell.el.addEventListener('focus', e => clues[cell.subgrid]?.classList.add('current'));
-			cell.el.addEventListener('blur', e => clues[cell.subgrid]?.classList.remove('current'));
+			cell.el.addEventListener('focus', e => {
+				clues[cell.subgrid]?.classList.add('current');
+				cells[totalWidth - 1 - xi][totalHeight - 1 - yi].el.classList.add('mirror');
+			});
+			cell.el.addEventListener('blur', e => {
+				clues[cell.subgrid]?.classList.remove('current');
+				cells[totalWidth - 1 - xi][totalHeight - 1 - yi].el.classList.remove('mirror');
+			});
 		}
 	}
 	const canvas = document.createElement('canvas');

@@ -54,6 +54,10 @@ table {
 	background-image: none !important;
 }
 
+#grid td.mirror {
+	box-shadow: 0 0 0 2px inset orange;
+}
+
 #grid td:focus {
 	box-shadow: 0 0 0 2px inset blue;
 	outline: none;
