@@ -14,15 +14,36 @@
 		<button>Start</button>
 	</form>
 	<div id="main">
+		<div id="sidebar">
+			<h1><a href="https://twitter.com/junimojis">Junimoji</a></h1>
+			<h2 id="title"></h2>
+			<span class="attribution">
+				by <span id="author"></span>
+			</span>
+			<p>
+				You are making a crossword using the letters below.
+				The empty, black squares are not given —
+				you will need to deduce them
+				and enter them using the space bar.
+				The completed crosswod will be a valid grid,
+				i.e., all words will be in the dictionary,
+				and the grid will have twofold rotational symmetry.
+				For each subgrid, you have been given the letters that go there,
+				in the order they appear,
+				going from left to right, top to bottom.
+			</p><p>
+				Move the cursor with the arrow keys; switch to the orange mirror cursor using enter enter letters with the letter keys.
+			</p>
+			<div class="spacer"></div>
+			<a href="" id="permalink" target="_blank">Link to solve</a>
+			<span id="progress"></span>
+			<a id="progress-link">Continue from here</a>
+			<a href="https://github.com/andrew-t/junimoji/">Source code and readme</a>
+			<button id="toggle-sidebar"></button>
+		</div>
 		<table><tbody id="grid"></tbody></table>
 		<ol id="clues">
 		</ol>
-		<div id="chrome">
-			<a href="" id="permalink" target="_blank">Link to solve</a>
-			<span id="progress"></span> •
-			<a id="progress-link">Continue from here</a> •
-			<a href="https://github.com/andrew-t/junimoji/">Source code and readme</a>
-		</div>
 	</div>
 	<script type="module" src="script.js"></script>
 </body>

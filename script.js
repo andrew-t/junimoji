@@ -13,6 +13,8 @@ let subGridsAcross,
 const cells = [],
 	clues = [];
 
+document.getElementById('toggle-sidebar').addEventListener('click', e => document.getElementById('sidebar').classList.toggle('collapsed'));
+
 preForm.addEventListener('submit', e => {
 	e.preventDefault();
 	subGridsAcross = inputInt('subgrids-across');
@@ -28,7 +30,11 @@ preForm.addEventListener('submit', e => {
 });
 
 if (window.location.hash) {
-	const [w,h,a,d,...c] = window.location.hash.substr(1).split(',');
+	const parts = window.location.hash.substr(1).split(';');
+	const [w,h,a,d,...c] = parts.pop().split(',');
+	const [title, author] = parts;
+	if (title) setText(document.getElementById('title'), title);
+	if (author) setText(document.getElementById('author'), author);
 	subGridWidth = parseInt(w, 10);
 	subGridHeight = parseInt(h, 10);
 	subGridsAcross = parseInt(a, 10);
@@ -39,8 +45,12 @@ if (window.location.hash) {
 	solving = true;
 	preset = true;
 	start();
-	for (const clue of clues)
+	for (const clue of clues) {
 		clue.value = c[clue.i];
+		if (clue.el.tagName == "SPAN")
+			setText(clue.el, c[clue.i]);
+		else clue.el.value = c[clue.i];
+	}
 	const progress = c[clues.length];
 	if (progress)
 		for (let x = 0; x < totalWidth; ++x)
@@ -55,17 +65,32 @@ if (window.location.hash) {
 function start() {
 	console.log('Starting...', { subGridWidth, subGridHeight, subGridsAcross, subGridsDown });
 	preForm.classList.add('hidden');
-	if (!solving) {
+	if (setting) {
 		document.getElementById('progress').classList.add('hidden');
 		document.getElementById('progress-link').classList.add('hidden');
-	}
+		const titleInput = addEl(document.getElementById('title'), 'input');
+		titleInput.id = 'title-input';
+		titleInput.value = 'Untitled';
+		titleInput.addEventListener('change', updateLink);
+		const authorInput = addEl(document.getElementById('author'), 'input');
+		authorInput.id = 'author-input';
+		authorInput.value = 'Anonymous';
+		authorInput.addEventListener('change', updateLink);
+	} else
+		defaultText(document.getElementById('author'), 'unknown author');
 	for (let i = 0; i < subGridsAcross * subGridsDown; ++i) {
-		const el = addEl(addEl(clueList, 'li'), 'input');
-		el.i = i;
-		el.cells = [];
-		el.setAttribute('required', true);
-		if (setting || preset) el.setAttribute('disabled', true);
-		clues.push(el);
+		const el = addEl(addEl(clueList, 'li'),
+			(setting || preset) ? 'span' : 'input');
+		const clue = { el, i, value: '', cells: [] };
+		el.classList.add('clue-text');
+		if (el.tagName == "INPUT") {
+			el.setAttribute('required', true);
+			el.addEventListener('change', e => {
+				clue.value = el.value;
+				render();
+			});
+		}
+		clues.push(clue);
 		if (solving && !preset)
 			el.addEventListener('change', updateLink);
 	}
@@ -91,11 +116,11 @@ function start() {
 			if (yi % subGridHeight == subGridHeight - 1) cell.el.classList.add('bottom');
 			if (((xi / subGridWidth) ^ (yi / subGridHeight)) & 1) cell.el.classList.add('checker');
 			cell.el.addEventListener('focus', e => {
-				clues[cell.subgrid]?.classList.add('current');
+				clues[cell.subgrid]?.el.classList.add('current');
 				cells[totalWidth - 1 - xi][totalHeight - 1 - yi].el.classList.add('mirror');
 			});
 			cell.el.addEventListener('blur', e => {
-				clues[cell.subgrid]?.classList.remove('current');
+				clues[cell.subgrid]?.el.classList.remove('current');
 				cells[totalWidth - 1 - xi][totalHeight - 1 - yi].el.classList.remove('mirror');
 			});
 		}
@@ -135,6 +160,7 @@ function start() {
 
 function cellKey(cell) {
 	return e => {
+		if (e.ctrlKey) return;
 		switch (e.key) {
 			case ' ':
 				cell.block = !cell.block;
@@ -180,9 +206,13 @@ function render() {
 	for (let xi = 0; xi < totalWidth; ++xi)
 		for (let yi = 0; yi < totalHeight; ++yi) {
 			const cell = cells[xi][yi];
-			if (cell.block) cell.el.classList.add('block');
-			else cell.el.classList.remove('block');
-			cell.el.innerHTML = !cell.block && cell.letter || '';
+			if (cell.block) {
+				setText(cell.el, '');
+				cell.el.classList.add('block');
+			} else {
+				cell.el.classList.remove('block');
+				setText(cell.el, cell.letter || (cells[totalWidth - xi - 1][totalHeight - yi - 1].letter ? '•' : ''));
+			}
 		}
 	for (const clue of clues) {
 		let txt = '';
@@ -191,13 +221,15 @@ function render() {
 				txt += cell.letter.toUpperCase();
 		if (solving) {
 			if (txt == clue.value.toUpperCase())
-				clue.classList.add('correct');
-			else clue.classList.remove('correct');
+				clue.el.classList.add('correct');
+			else clue.el.classList.remove('correct');
 			if (mightBe(txt, clue.value.toUpperCase()))
-				clue.classList.remove('wrong');
-			else clue.classList.add('wrong');
-		} else
-			clue.value = txt.toUpperCase();
+				clue.el.classList.remove('wrong');
+			else clue.el.classList.add('wrong');
+		} else {
+			clue.value = txt;
+			setText(clue.el, txt);
+		}
 	}
 	if (solving) {
 		const p = cells.reduce(
@@ -217,7 +249,13 @@ function render() {
 }
 
 function getHash() {
-	return `#${subGridWidth},${subGridHeight},${subGridsAcross},${subGridsDown},${clues.map(c => c.value).join(',')}`;
+	const title = document.getElementById('title')?.innerText
+		|| document.getElementById('title-input')?.value
+		|| 'Untitled';
+	const author = document.getElementById('author')?.innerText
+		|| document.getElementById('author-input')?.value
+		|| 'Anonymous';
+	return `#${title};${author};${subGridWidth},${subGridHeight},${subGridsAcross},${subGridsDown},${clues.map(c => c.value).join(',')}`;
 }
 
 function updateLink() {
@@ -232,6 +270,13 @@ function addEl(parent, tag) {
 	const el = document.createElement(tag);
 	parent.appendChild(el);
 	return el;
+}
+function setText(el, text) {
+	el.innerHTML = "";
+	el.appendChild(document.createTextNode(text));
+}
+function defaultText(el, text) {
+	if (!el.innerText) setText(el, text);
 }
 
 function mightBe(guess, clue) {
