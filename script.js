@@ -13,7 +13,8 @@ const preForm = document.getElementById('before'),
 	progressLink = document.getElementById('progress-link'),
 	gridTable = document.getElementById('grid-table'),
 	solveTickbox = document.getElementById('solve'),
-	permalink = document.getElementById('permalink');
+	permalink = document.getElementById('permalink'),
+	keyboard = document.getElementById('keyboard');
 
 let subGridsAcross, subGridsDown,
 	subGridWidth, subGridHeight,
@@ -147,43 +148,67 @@ function start() {
 		}
 }
 
+function setCell(cell, letter) {
+	cell.letter = letter;
+	cell.block = false;
+	render();
+}
+
+function emptyCell(cell) {
+	cell.letter = null;
+	cell.block = false;
+	render();
+}
+
+function toggleBlock(cell) {
+	cell.letter = null;
+	cell.block = !cell.block;
+	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].block = cell.block;
+	render();
+}
+
+function moveCursor(x, y) {
+	if (x >= 0 && y >= 0 && x < totalWidth && y < totalHeight) {
+		cursorX = x;
+		cursorY = y;
+		render();
+	}
+}
+
 function cellKey(e) {
 	if (e.ctrlKey) return;
 	const cell = cells[cursorX][cursorY];
 	switch (e.key) {
 		case ' ':
-			cell.block = !cell.block;
-			cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].block = cell.block;
+			toggleBlock(cell);
 			break;
 		case 'ArrowUp':
-			if (cursorY > 0) --cursorY;
+			moveCursor(cursorX, cursorY - 1);
 			break;
 		case 'ArrowDown':
-			if (cursorY < totalHeight - 1) ++cursorY;
+			moveCursor(cursorX, cursorY + 1);
 			break;
 		case 'ArrowLeft':
-			if (cursorX > 0) --cursorX;
+			moveCursor(cursorX - 1, cursorY);
 			break;
 		case 'ArrowRight':
-			if (cursorX < totalWidth - 1) ++cursorX;
+			moveCursor(cursorX + 1, cursorY);
 			break;
 		case 'Backspace':
-			cell.letter = null;
+			emptyCell(cell);
 			break;
 		case 'Enter':
-			cursorX = totalWidth - cursorX - 1;
-			cursorY = totalHeight - cursorY - 1;
+			moveCursor(totalWidth - cursorX - 1, totalHeight - cursorY - 1);
 			break;
 		default:
 			if (/^[A-Z]$/i.test(e.key))
-				cell.letter = e.key.toUpperCase();
+				setCell(cell, e.key.toUpperCase());
 			else {
 				console.log('Unexpected key:', e);
 				return;
 			}
 	}
 	e.preventDefault();
-	render();
 };
 
 function render() {
@@ -224,7 +249,20 @@ function render() {
 	const cell = cells[cursorX][cursorY];
 	cell.el.classList.add('cursor');
 	cells[totalWidth - cursorX - 1][totalHeight - cursorY - 1].el.classList.add('mirror');
-	clues[cell.subgrid].el.classList.add('current');
+	const clue = clues[cell.subgrid];
+	clue.el.classList.add('current');
+	keyboard.innerHTML = '';
+	for (const letter of clue.value) {
+		const button = addEl(keyboard, 'button');
+		setText(button, letter);
+		button.addEventListener('click', e => setCell(cell, letter));
+	}
+	const blackButton = addEl(keyboard, 'button');
+	setText(blackButton, '⏹');
+	blackButton.addEventListener('click', e => toggleBlock(cell));
+	const deleteButton = addEl(keyboard, 'button');
+	setText(deleteButton, '⌫');
+	deleteButton.addEventListener('click', e => emptyCell(cell));
 }
 
 function getHash() {
