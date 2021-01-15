@@ -87,8 +87,11 @@ body:not(.hide-mirror) #grid td.mirror {
 	box-shadow: 0 0 0 2px inset orange;
 }
 
-#grid td:focus {
+#grid td.cursor {
 	box-shadow: 0 0 0 2px inset blue !important;
+}
+
+#grid:focus {
 	outline: none;
 }
 

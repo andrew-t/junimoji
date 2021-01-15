@@ -15,6 +15,8 @@ let subGridsAcross,
 const cells = [],
 	clues = [];
 
+let cursorX = 0, cursorY = 0;
+
 document.getElementById('toggle-sidebar').addEventListener('click', e => document.getElementById('sidebar').classList.toggle('collapsed'));
 
 preForm.addEventListener('submit', e => {
@@ -67,6 +69,7 @@ if (window.location.hash) {
 function start() {
 	console.log('Starting...', { subGridWidth, subGridHeight, subGridsAcross, subGridsDown });
 	preForm.classList.add('hidden');
+	document.getElementById('grid-table').addEventListener('keydown', cellKey);
 	if (setting) {
 		document.getElementById('progress').classList.add('hidden');
 		document.getElementById('progress-link').classList.add('hidden');
@@ -110,20 +113,16 @@ function start() {
 				el: addEl(el, 'td')
 			};
 			clues[cell.subgrid].cells.push(cell);
-			cell.el.setAttribute('tabindex', 0);
-			cell.el.addEventListener('keydown', cellKey(cell));
 			if (xi % subGridWidth == 0) cell.el.classList.add('left');
 			if (xi % subGridWidth == subGridWidth - 1) cell.el.classList.add('right');
 			if (yi % subGridHeight == 0) cell.el.classList.add('top');
 			if (yi % subGridHeight == subGridHeight - 1) cell.el.classList.add('bottom');
 			if (((xi / subGridWidth) ^ (yi / subGridHeight)) & 1) cell.el.classList.add('checker');
-			cell.el.addEventListener('focus', e => {
-				clues[cell.subgrid]?.el.classList.add('current');
-				cells[totalWidth - 1 - xi][totalHeight - 1 - yi].el.classList.add('mirror');
-			});
-			cell.el.addEventListener('blur', e => {
-				clues[cell.subgrid]?.el.classList.remove('current');
-				cells[totalWidth - 1 - xi][totalHeight - 1 - yi].el.classList.remove('mirror');
+			cell.el.addEventListener('click', e => {
+				grid.focus();
+				cursorX = cell.x;
+				cursorY = cell.y;
+				render();
 			});
 		}
 	}
@@ -160,49 +159,50 @@ function start() {
 		}
 }
 
-function cellKey(cell) {
-	return e => {
-		if (e.ctrlKey) return;
-		switch (e.key) {
-			case ' ':
-				cell.block = !cell.block;
-				cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].block = cell.block;
+function cellKey(e) {
+	if (e.ctrlKey) return;
+	const cell = cells[cursorX]?.[cursorY];
+	if (!cell) return;
+	switch (e.key) {
+		case ' ':
+			cell.block = !cell.block;
+			cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].block = cell.block;
+			e.preventDefault();
+			break;
+		case 'ArrowUp':
+			if (cursorY > 0) --cursorY;
+			e.preventDefault();
+			break;
+		case 'ArrowDown':
+			if (cursorY < totalHeight - 1) ++cursorY;
+			e.preventDefault();
+			break;
+		case 'ArrowLeft':
+			if (cursorX > 0) --cursorX;
+			e.preventDefault();
+			break;
+		case 'ArrowRight':
+			if (cursorX < totalWidth - 1) ++cursorX;
+			e.preventDefault();
+			break;
+		case 'Backspace':
+			cell.letter = null;
+			e.preventDefault();
+			break;
+		case 'Enter':
+			cursorX = totalWidth - cursorX - 1;
+			cursorY = totalHeight - cursorY - 1;
+			break;
+		default:
+			if (/^[A-Z]$/i.test(e.key)) {
+				cell.letter = e.key.toUpperCase();
 				e.preventDefault();
-				break;
-			case 'ArrowUp':
-				cells[cell.x]?.[cell.y - 1]?.el.focus();
-				e.preventDefault();
-				break;
-			case 'ArrowDown':
-				cells[cell.x]?.[cell.y + 1]?.el.focus();
-				e.preventDefault();
-				break;
-			case 'ArrowLeft':
-				cells[cell.x - 1]?.[cell.y]?.el.focus();
-				e.preventDefault();
-				break;
-			case 'ArrowRight':
-				cells[cell.x + 1]?.[cell.y]?.el.focus();
-				e.preventDefault();
-				break;
-			case 'Backspace':
-				cell.letter = null;
-				e.preventDefault();
-				break;
-			case 'Enter':
-				cells[totalWidth - cell.x - 1][totalHeight - cell.y - 1].el.focus();
-				break;
-			default:
-				if (/^[A-Z]$/i.test(e.key)) {
-					cell.letter = e.key.toUpperCase();
-					e.preventDefault();
-				}
-				else
-					console.log('Unexpected key:', e);
-		}
-		render();
-	};
-}
+			}
+			else
+				console.log('Unexpected key:', e);
+	}
+	render();
+};
 
 function render() {
 	for (let xi = 0; xi < totalWidth; ++xi)
@@ -248,6 +248,15 @@ function render() {
 		document.getElementById('progress-link').setAttribute('href', `${getHash()},${l}`);
 	}
 	if (setting) updateLink();
+	document.querySelector('.cursor')?.classList.remove('cursor');
+	document.querySelector('.current')?.classList.remove('current');
+	document.querySelector('.mirror')?.classList.remove('mirror');
+	const cell = cells[cursorX]?.[cursorY];
+	if (cell) {
+		cell.el.classList.add('cursor');
+		cells[totalWidth - cursorX - 1]?.[totalHeight - cursorY - 1]?.el.classList.add('mirror');
+		clues[cell.subgrid].el.classList.add('current');
+	}
 }
 
 function getHash() {
