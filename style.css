@@ -83,12 +83,12 @@ table {
 	background-image: none !important;
 }
 
-#grid td.mirror {
+body:not(.hide-mirror) #grid td.mirror {
 	box-shadow: 0 0 0 2px inset orange;
 }
 
 #grid td:focus {
-	box-shadow: 0 0 0 2px inset blue;
+	box-shadow: 0 0 0 2px inset blue !important;
 	outline: none;
 }
 

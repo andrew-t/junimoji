@@ -1,3 +1,5 @@
+import './hide-mirror.js';
+
 const preForm = document.getElementById('before'),
 	grid = document.getElementById('grid'),
 	clueList = document.getElementById('clues');
