@@ -1,15 +1,23 @@
 import './hide-mirror.js';
+import './collapse-sidebar.js';
+import { addEl, setText, defaultText, inputInt, addInput, classIf } from './dom-tools.js';
+import numberImage from './number-image.js';
+import { clueCellsText, percentComplete } from './utils.js';
 
 const preForm = document.getElementById('before'),
 	grid = document.getElementById('grid'),
-	clueList = document.getElementById('clues');
+	clueList = document.getElementById('clues'),
+	titleBox = document.getElementById('title'),
+	authorBox = document.getElementById('author'),
+	progressSpan = document.getElementById('progress'),
+	progressLink = document.getElementById('progress-link'),
+	gridTable = document.getElementById('grid-table'),
+	solveTickbox = document.getElementById('solve'),
+	permalink = document.getElementById('permalink');
 
-let subGridsAcross,
-	subGridsDown,
-	subGridWidth,
-	subGridHeight,
-	totalWidth,
-	totalHeight,
+let subGridsAcross, subGridsDown,
+	subGridWidth, subGridHeight,
+	totalWidth, totalHeight,
 	solving, setting, preset;
 
 const cells = [],
@@ -17,19 +25,15 @@ const cells = [],
 
 let cursorX = 0, cursorY = 0;
 
-document.getElementById('toggle-sidebar').addEventListener('click', e => document.getElementById('sidebar').classList.toggle('collapsed'));
-
 preForm.addEventListener('submit', e => {
 	e.preventDefault();
 	subGridsAcross = inputInt('subgrids-across');
 	subGridsDown = inputInt('subgrids-down');
 	subGridWidth = inputInt('subgrid-width');
 	subGridHeight = inputInt('subgrid-height');
-	solving = document.getElementById('solve').checked;
+	solving = solveTickbox.checked;
 	setting = !solving;
 	preset = false;
-	totalWidth = subGridWidth * subGridsAcross;
-	totalHeight = subGridHeight * subGridsDown;
 	start();
 });
 
@@ -37,14 +41,12 @@ if (window.location.hash) {
 	const parts = window.location.hash.substr(1).split(';');
 	const [w,h,a,d,...c] = parts.pop().split(',');
 	const [title, author] = parts;
-	if (title) setText(document.getElementById('title'), title);
-	if (author) setText(document.getElementById('author'), author);
+	if (title) setText(titleBox, title);
+	if (author) setText(authorBox, author);
 	subGridWidth = parseInt(w, 10);
 	subGridHeight = parseInt(h, 10);
 	subGridsAcross = parseInt(a, 10);
 	subGridsDown = parseInt(d, 10);
-	totalWidth = subGridWidth * subGridsAcross;
-	totalHeight = subGridHeight * subGridsDown;
 	setting = false;
 	solving = true;
 	preset = true;
@@ -67,22 +69,17 @@ if (window.location.hash) {
 }
 
 function start() {
-	console.log('Starting...', { subGridWidth, subGridHeight, subGridsAcross, subGridsDown });
 	preForm.classList.add('hidden');
-	document.getElementById('grid-table').addEventListener('keydown', cellKey);
+	gridTable.addEventListener('keydown', cellKey);
+	totalWidth = subGridWidth * subGridsAcross;
+	totalHeight = subGridHeight * subGridsDown;
 	if (setting) {
-		document.getElementById('progress').classList.add('hidden');
-		document.getElementById('progress-link').classList.add('hidden');
-		const titleInput = addEl(document.getElementById('title'), 'input');
-		titleInput.id = 'title-input';
-		titleInput.value = 'Untitled';
-		titleInput.addEventListener('change', updateLink);
-		const authorInput = addEl(document.getElementById('author'), 'input');
-		authorInput.id = 'author-input';
-		authorInput.value = 'Anonymous';
-		authorInput.addEventListener('change', updateLink);
+		progressSpan.classList.add('hidden');
+		progressLink.classList.add('hidden');
+		addInput(titleBox, 'title-input', 'Untitled', updateLink);
+		addInput(authorBox, 'author-input', 'Anonymous', updateLink);
 	} else
-		defaultText(document.getElementById('author'), 'unknown author');
+		defaultText(authorBox, 'unknown author');
 	for (let i = 0; i < subGridsAcross * subGridsDown; ++i) {
 		const el = addEl(addEl(clueList, 'li'),
 			(setting || preset) ? 'span' : 'input');
@@ -113,11 +110,11 @@ function start() {
 				el: addEl(el, 'td')
 			};
 			clues[cell.subgrid].cells.push(cell);
-			if (xi % subGridWidth == 0) cell.el.classList.add('left');
-			if (xi % subGridWidth == subGridWidth - 1) cell.el.classList.add('right');
-			if (yi % subGridHeight == 0) cell.el.classList.add('top');
-			if (yi % subGridHeight == subGridHeight - 1) cell.el.classList.add('bottom');
-			if (((xi / subGridWidth) ^ (yi / subGridHeight)) & 1) cell.el.classList.add('checker');
+			classIf(cell.el, 'left', xi % subGridWidth == 0);
+			classIf(cell.el, 'right', xi % subGridWidth == subGridWidth - 1);
+			classIf(cell.el, 'top', yi % subGridHeight == 0);
+			classIf(cell.el, 'bottom', yi % subGridHeight == subGridHeight - 1);
+			classIf(cell.el, 'checker', ((xi / subGridWidth) ^ (yi / subGridHeight)) & 1);
 			cell.el.addEventListener('click', e => {
 				grid.focus();
 				cursorX = cell.x;
@@ -126,27 +123,18 @@ function start() {
 			});
 		}
 	}
-	const canvas = document.createElement('canvas');
-	canvas.width = 200;
-	canvas.height = 200;
-	const ctx = canvas.getContext('2d');
-	ctx.font = "100px sans-serif";
-	ctx.transform(0.6, 0, 0, 1, 40, 0);
-	ctx.textAlign = 'center';
 	for (let x = 0; x < subGridsAcross; ++x)
 		for (let y = 0; y < subGridsDown; ++y) {
-			const check = ((x ^ y) & 1);
-			ctx.fillStyle = check ? '#FDD' : '#FFF';
-			ctx.fillRect(-1, -2, 202, 202);
-			ctx.fillStyle = check ? '#FFF' : '#FDD';
-			ctx.fillText(x + y * subGridsAcross + 1, 100, 135, 200);
-			const img = canvas.toDataURL();
+			const backgroundImage = `url(${numberImage(
+				x + y * subGridsAcross + 1,
+				(x ^ y) & 1
+			)})`;
 			for (let u = 0; u < subGridWidth; ++u)
 				for (let v = 0; v < subGridHeight; ++v) {
 					const xx = (u - subGridWidth / 2) * 2,
 						yy = (v - subGridHeight / 2) * 2;
 					Object.assign(cells[x * subGridWidth + u][y * subGridHeight + v].el.style, {
-						backgroundImage: `url(${img})`,
+						backgroundImage,
 						backgroundScale: `
 							calc(${subGridWidth * 2}rem + ${subGridWidth - 1}px)
 							calc(${subGridHeight * 2}rem + ${subGridHeight - 1}px)`,
@@ -161,46 +149,40 @@ function start() {
 
 function cellKey(e) {
 	if (e.ctrlKey) return;
-	const cell = cells[cursorX]?.[cursorY];
-	if (!cell) return;
+	const cell = cells[cursorX][cursorY];
 	switch (e.key) {
 		case ' ':
 			cell.block = !cell.block;
 			cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].block = cell.block;
-			e.preventDefault();
 			break;
 		case 'ArrowUp':
 			if (cursorY > 0) --cursorY;
-			e.preventDefault();
 			break;
 		case 'ArrowDown':
 			if (cursorY < totalHeight - 1) ++cursorY;
-			e.preventDefault();
 			break;
 		case 'ArrowLeft':
 			if (cursorX > 0) --cursorX;
-			e.preventDefault();
 			break;
 		case 'ArrowRight':
 			if (cursorX < totalWidth - 1) ++cursorX;
-			e.preventDefault();
 			break;
 		case 'Backspace':
 			cell.letter = null;
-			e.preventDefault();
 			break;
 		case 'Enter':
 			cursorX = totalWidth - cursorX - 1;
 			cursorY = totalHeight - cursorY - 1;
 			break;
 		default:
-			if (/^[A-Z]$/i.test(e.key)) {
+			if (/^[A-Z]$/i.test(e.key))
 				cell.letter = e.key.toUpperCase();
-				e.preventDefault();
-			}
-			else
+			else {
 				console.log('Unexpected key:', e);
+				return;
+			}
 	}
+	e.preventDefault();
 	render();
 };
 
@@ -217,77 +199,46 @@ function render() {
 			}
 		}
 	for (const clue of clues) {
-		let txt = '';
-		for (const cell of clue.cells)
-			if (cell.letter && !cell.block)
-				txt += cell.letter.toUpperCase();
+		const txt = clueCellsText(clue);
 		if (solving) {
-			if (txt == clue.value.toUpperCase())
-				clue.el.classList.add('correct');
-			else clue.el.classList.remove('correct');
-			if (mightBe(txt, clue.value.toUpperCase()))
-				clue.el.classList.remove('wrong');
-			else clue.el.classList.add('wrong');
+			classIf(clue.el, 'correct', txt == clue.value.toUpperCase());
+			classIf(clue.el, 'wrong', !mightBe(txt, clue.value.toUpperCase()));
 		} else {
 			clue.value = txt;
 			setText(clue.el, txt);
 		}
 	}
 	if (solving) {
-		const p = cells.reduce(
-			(a, b) => b.reduce(
-				(a, b) => (b.block || b.letter) ? a + 1 : a,
-				a),
-			0) / (totalWidth * totalHeight);
-		document.getElementById('progress').innerHTML = `${Math.floor(p * 100)}% complete`;
+		progressSpan.innerHTML = `${Math.floor(percentComplete(cells))}% complete`;
 		let l = '';
 		for (let y = 0; y < totalHeight; ++y)
 			for (let x = 0; x < totalWidth; ++x)
 				l += cells[x][y].block ? '=' : (cells[x][y].letter || '-');
 		updateLink();
-		document.getElementById('progress-link').setAttribute('href', `${getHash()},${l}`);
+		progressLink.setAttribute('href', `${getHash()},${l}`);
 	}
 	if (setting) updateLink();
 	document.querySelector('.cursor')?.classList.remove('cursor');
 	document.querySelector('.current')?.classList.remove('current');
 	document.querySelector('.mirror')?.classList.remove('mirror');
-	const cell = cells[cursorX]?.[cursorY];
-	if (cell) {
-		cell.el.classList.add('cursor');
-		cells[totalWidth - cursorX - 1]?.[totalHeight - cursorY - 1]?.el.classList.add('mirror');
-		clues[cell.subgrid].el.classList.add('current');
-	}
+	const cell = cells[cursorX][cursorY];
+	cell.el.classList.add('cursor');
+	cells[totalWidth - cursorX - 1][totalHeight - cursorY - 1].el.classList.add('mirror');
+	clues[cell.subgrid].el.classList.add('current');
 }
 
 function getHash() {
-	const title = document.getElementById('title')?.innerText
+	const title = titleBox.innerText
 		|| document.getElementById('title-input')?.value
 		|| 'Untitled';
-	const author = document.getElementById('author')?.innerText
+	const author = authorBox.innerText
 		|| document.getElementById('author-input')?.value
 		|| 'Anonymous';
 	return `#${title};${author};${subGridWidth},${subGridHeight},${subGridsAcross},${subGridsDown},${clues.map(c => c.value).join(',')}`;
 }
 
 function updateLink() {
-	document.getElementById('permalink').setAttribute('href', getHash());
-}
-
-function inputInt(id) {
-	return parseInt(document.getElementById(id).value, 10);
-}
-
-function addEl(parent, tag) {
-	const el = document.createElement(tag);
-	parent.appendChild(el);
-	return el;
-}
-function setText(el, text) {
-	el.innerHTML = "";
-	el.appendChild(document.createTextNode(text));
-}
-function defaultText(el, text) {
-	if (!el.innerText) setText(el, text);
+	permalink.setAttribute('href', getHash());
 }
 
 function mightBe(guess, clue) {
