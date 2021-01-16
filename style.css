@@ -62,11 +62,17 @@ body {
 	margin-right: 1em;
 }
 
-table {
-	border-collapse: collapse;
-	display: inline-block;
+#table-container {
 	grid-column: 2 / span 1;
 	grid-row: 1 / span 1;
+	overflow-x: auto;
+	max-width: 100%;
+	min-width: 10rem;
+	flex-shrink: 0;
+}
+
+table {
+	border-collapse: collapse;
 }
 #grid td {
 	border: 1px solid black;
