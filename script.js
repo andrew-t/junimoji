@@ -258,7 +258,7 @@ function render() {
 	keyboard.innerHTML = '';
 	for (const letter of clue.value) {
 		const button = addEl(keyboard, 'button');
-		setText(button, letter);
+		setText(button, letter.toUpperCase());
 		button.addEventListener('click', e => setCell(cell, letter));
 	}
 	const blackButton = addEl(keyboard, 'button');
