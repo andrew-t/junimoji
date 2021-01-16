@@ -4,15 +4,18 @@ label { display: block; }
 body {
 	margin: 0;
 	padding: 0;
+	overflow: hidden;
 }
 
 #main, #before {
 	position: absolute;
-	left: 1em;
-	top: 1em;
-	height: calc(100vh - 2em - 16px);
+	left: 0em;
+	top: 0em;
+	height: 100vh;
+	width: 100vw;
 }
 
+#before { padding: 2em; }
 #before:not(.hidden) + #main { display: none; }
 
 #main {
@@ -27,7 +30,7 @@ body {
 	display: flex;
 	flex-direction: column;
 	margin-right: 1em;
-	padding-right: 1em;
+	padding: 1em;
 	font-family: sans-serif;
 	overflow: auto;
 	position: relative;
@@ -35,7 +38,7 @@ body {
 }
 #sidebar h1 { margin: 0; }
 .spacer { flex-grow: 1; }
-#sidebar.collapsed { width: 2em; }
+#sidebar.collapsed { width: 1.5em; padding: 0; margin: 0; }
 #sidebar.collapsed > :not(button) { display: none };
 
 #toggle-sidebar {
@@ -127,6 +130,9 @@ body:not(.hide-mirror) #grid td.mirror {
 	padding: 0 0 0 4rem;
 	align-content: stretch;
 	align-items: stretch;
+	overflow: auto;
+	height: 100vh;
+	min-width: 10em;
 }
 
 #clues li {
@@ -168,10 +174,13 @@ body:not(.hide-mirror) #grid td.mirror {
 #keyboard { display: none; }
 #grid-table:not(:focus) td { box-shadow: none !important; }
 @media screen and (hover: none) and (pointer: coarse) {
+	body {
+		overflow: auto;
+	}
 	#main {
 		display: flex;
 		flex-direction: column;
-		width: calc(100vw - 2em);
+		width: 100vw;
 	}
 	#grid-table:not(:focus) td.cursor { box-shadow: 0 0 0 2px inset blue; }
 	#grid-table:not(:focus) td.mirror { box-shadow: 0 0 0 2px inset orange; }
@@ -188,6 +197,7 @@ body:not(.hide-mirror) #grid td.mirror {
 		margin-top: 2em;
 		padding-bottom: 20em;
 		height: auto;
+		overflow: visible;
 	}
 	#keyboard {
 		position: fixed;
