@@ -201,11 +201,13 @@ body:not(.hide-mirror) #grid td.mirror {
 	}
 	#keyboard button {
 		border: none;
+		border-bottom: 4px solid #bbb;
 		border-radius: 0.5rem;
 		font-size: 1.5rem;
 		height: 3rem;
 		flex-grow: 1;
 		margin: 0.25rem 0.25rem;
 		min-width: 3rem;
+		background: #eee;
 	}
 }
