@@ -42,7 +42,8 @@ preForm.addEventListener('submit', e => {
 if (window.location.hash) {
 	const parts = window.location.hash.substr(1).split(';');
 	const [w,h,a,d,...c] = parts.pop().split(',');
-	const [title, author] = parts;
+	const [title, author] = parts.map(decodeURIComponent);
+	console.log({parts, title, author})
 	if (title) setText(titleBox, title);
 	if (author) setText(authorBox, author);
 	subGridWidth = parseInt(w, 10);
@@ -276,7 +277,7 @@ function getHash() {
 	const author = authorBox.innerText
 		|| document.getElementById('author-input')?.value
 		|| 'Anonymous';
-	return `#${title};${author};${subGridWidth},${subGridHeight},${subGridsAcross},${subGridsDown},${clues.map(c => c.value).join(',')}`;
+	return `#${encodeURIComponent(title)};${encodeURIComponent(author)};${subGridWidth},${subGridHeight},${subGridsAcross},${subGridsDown},${clues.map(c => c.value).join(',')}`;
 }
 
 function updateLink() {
