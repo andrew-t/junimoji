@@ -166,12 +166,15 @@ body:not(.hide-mirror) #grid td.mirror {
 #permalink[href^="#"] { display: block; }
 
 #keyboard { display: none; }
+#grid-table:not(:focus) td { box-shadow: none !important; }
 @media screen and (hover: none) and (pointer: coarse) {
 	#main {
 		display: flex;
 		flex-direction: column;
 		width: calc(100vw - 2em);
 	}
+	#grid-table:not(:focus) td.cursor { box-shadow: 0 0 0 2px inset blue; }
+	#grid-table:not(:focus) td.mirror { box-shadow: 0 0 0 2px inset orange; }
 	#sidebar {
 		overflow: unset;
 		width: calc(100vw - 2em);
