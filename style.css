@@ -160,7 +160,7 @@ body:not(.hide-mirror) #grid td.mirror {
 #permalink[href^="#"] { display: block; }
 
 #keyboard { display: none; }
-@media (aspect-ratio < 1) {
+@media screen and (hover: none) and (pointer: coarse) {
 	#main {
 		display: flex;
 		flex-direction: column;
