@@ -261,7 +261,7 @@ function render() {
 		button.addEventListener('click', e => setCell(cell, letter));
 	}
 	const blackButton = addEl(keyboard, 'button');
-	setText(blackButton, '⏹');
+	setText(blackButton, '⬛');
 	blackButton.addEventListener('click', e => toggleBlock(cell));
 	const deleteButton = addEl(keyboard, 'button');
 	setText(deleteButton, '⌫');
