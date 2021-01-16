@@ -151,18 +151,21 @@ function start() {
 function setCell(cell, letter) {
 	cell.letter = letter;
 	cell.block = false;
+	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].block = false;
 	render();
 }
 
 function emptyCell(cell) {
 	cell.letter = null;
 	cell.block = false;
+	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].block = false;
 	render();
 }
 
 function toggleBlock(cell) {
 	cell.letter = null;
 	cell.block = !cell.block;
+	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].letter = null;
 	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].block = cell.block;
 	render();
 }
