@@ -33,7 +33,7 @@ preForm.addEventListener('submit', e => {
 	subGridWidth = inputInt('subgrid-width');
 	subGridHeight = inputInt('subgrid-height');
 	solving = solveTickbox.checked ||
-		(window.getComputedStyle(solveTickbox).getPropertyValue('display') == 'hidden');
+		(window.getComputedStyle(solveTickbox).getPropertyValue('display') == 'none');
 	setting = !solving;
 	preset = false;
 	start();

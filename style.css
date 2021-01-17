@@ -186,24 +186,24 @@ body:not(.hide-mirror) #grid td.mirror {
 		flex-direction: column;
 		width: 100vw;
 	}
-	#grid-table:not(:focus) td.cursor { box-shadow: 0 0 0 2px inset blue; }
-	#grid-table:not(:focus) td.mirror { box-shadow: 0 0 0 2px inset orange; }
+	#grid-table td.cursor { box-shadow: 0 0 0 2px inset blue !important; }
+	#grid-table td.mirror { box-shadow: 0 0 0 2px inset orange !important; }
 	#sidebar {
 		overflow: unset;
 		width: calc(100vw - 2em);
 		margin-bottom: 2em;
 	}
 	#solve,
+	#solve-label,
 	#toggle-sidebar {
 		display: none;
 	}
 	#table-container {
-		padding: 0;
+		padding: 0 1em;
 		text-align: center;
 	}
 	#clues {
-		margin-top: 2em;
-		padding: 1em 1em 20em 1em;
+		padding: 1em 1em 20em 2.5em;
 		height: auto;
 		overflow: visible;
 	}
