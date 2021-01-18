@@ -16,7 +16,7 @@ switch (localStorage.getItem('mobile')) {
 	default:
 		checkbox.checked = window.matchMedia(
 			'screen and (hover: none) and (pointer: coarse)'
-		);
+		).matches;
 		break;
 }
 
