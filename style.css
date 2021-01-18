@@ -197,8 +197,6 @@ body.mobile #sidebar {
 	width: calc(100vw - 2em);
 	margin-bottom: 2em;
 }
-body.mobile #solve,
-body.mobile #solve-label,
 body.mobile #toggle-sidebar {
 	display: none;
 }
@@ -234,4 +232,12 @@ body.mobile #keyboard button {
 	margin: 0.25rem 0.25rem;
 	min-width: 3rem;
 	background: #eee;
+}
+
+/* rotate the board! */
+#table-container { perspective: 100vmax; }
+#grid-table.rotating { animation: rotate 1.5s; }
+@keyframes rotate {
+	from { transform: rotateY(0); }
+	to   { transform: rotateY(360deg); }
 }

@@ -2,8 +2,9 @@ import './hide-mirror.js';
 import './collapse-sidebar.js';
 import { addEl, setText, defaultText, inputInt, addInput, classIf } from './dom-tools.js';
 import numberImage from './number-image.js';
-import { clueCellsText, percentComplete } from './utils.js';
+import { clueCellsText } from './utils.js';
 import isMobile from './mobile.js';
+import updateProgressSpan from './progress.js';
 
 const preForm = document.getElementById('before'),
 	grid = document.getElementById('grid'),
@@ -239,7 +240,7 @@ function render() {
 		}
 	}
 	if (solving) {
-		progressSpan.innerHTML = `${Math.floor(percentComplete(cells))}% complete`;
+		updateProgressSpan(cells);
 		let l = '';
 		for (let y = 0; y < totalHeight; ++y)
 			for (let x = 0; x < totalWidth; ++x)
