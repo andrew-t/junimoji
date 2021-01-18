@@ -138,6 +138,7 @@ body:not(.hide-mirror) #grid td.mirror {
 	overflow: auto;
 	height: 100vh;
 	min-width: 10em;
+	box-sizing: border-box;
 }
 
 #clues li {
