@@ -3,6 +3,7 @@ import './collapse-sidebar.js';
 import { addEl, setText, defaultText, inputInt, addInput, classIf } from './dom-tools.js';
 import numberImage from './number-image.js';
 import { clueCellsText, percentComplete } from './utils.js';
+import isMobile from './mobile.js';
 
 const preForm = document.getElementById('before'),
 	grid = document.getElementById('grid'),
@@ -32,8 +33,7 @@ preForm.addEventListener('submit', e => {
 	subGridsDown = inputInt('subgrids-down');
 	subGridWidth = inputInt('subgrid-width');
 	subGridHeight = inputInt('subgrid-height');
-	solving = solveTickbox.checked ||
-		(window.getComputedStyle(solveTickbox).getPropertyValue('display') == 'none');
+	solving = solveTickbox.checked;
 	setting = !solving;
 	preset = false;
 	start();

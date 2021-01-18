@@ -11,7 +11,7 @@
 		<label><span>Subgrid height</span><input id="subgrid-height" type="number" value="3" min="0"></label>
 		<label><span>Subgrids across</span><input id="subgrids-across" type="number" value="3" min="0"></label>
 		<label><span>Subgrids down</span><input id="subgrids-down" type="number" value="3" min="0"></label>
-		<label id="solve-label"><input type="checkbox" id="solve"><span>Solve (rather than set)</span></label>
+		<label id="solve-label"><input type="checkbox" id="solve"><span>Solve (rather than set) — note that setting requires a physical keyboard</span></label>
 		<button>Start</button>
 	</form>
 	<div id="main">
@@ -39,6 +39,10 @@
 			<label>
 				<input type="checkbox" id="hide-mirror">
 				Hide mirror cursor
+			</label>
+			<label>
+				<input type="checkbox" id="mobile">
+				Mobile-friendly mode
 			</label>
 			<a href="" id="permalink" target="_blank">Link to solve</a>
 			<span id="progress"></span>

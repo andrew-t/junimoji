@@ -15,7 +15,7 @@ body {
 	width: 100vw;
 }
 
-#before { padding: 2em; }
+#before { padding: 2em; box-sizing: border-box; }
 #before:not(.hidden) + #main { display: none; }
 
 #main {
@@ -63,6 +63,10 @@ body {
 }
 #before label input[type=checkbox] {
 	margin-right: 1em;
+}
+#before label input[type=checkbox] + span {
+	display: inline;
+	width: auto;
 }
 
 #table-container {
@@ -177,58 +181,57 @@ body:not(.hide-mirror) #grid td.mirror {
 
 #keyboard { display: none; }
 #grid-table:not(:focus) td { box-shadow: none !important; }
-@media screen and (hover: none) and (pointer: coarse) {
-	body {
-		overflow: auto;
-	}
-	#main {
-		display: flex;
-		flex-direction: column;
-		width: 100vw;
-	}
-	#grid-table td.cursor { box-shadow: 0 0 0 2px inset blue !important; }
-	#grid-table td.mirror { box-shadow: 0 0 0 2px inset orange !important; }
-	#sidebar {
-		overflow: unset;
-		width: calc(100vw - 2em);
-		margin-bottom: 2em;
-	}
-	#solve,
-	#solve-label,
-	#toggle-sidebar {
-		display: none;
-	}
-	#table-container {
-		padding: 0 1em;
-		text-align: center;
-	}
-	#clues {
-		padding: 1em 1em 20em 2.5em;
-		height: auto;
-		overflow: visible;
-	}
-	#keyboard {
-		position: fixed;
-		display: flex;
-		z-index: 1000;
-		bottom: 0;
-		left: 0;
-		width: 100%;
-		box-sizing: border-box;
-		background: #ddd;
-		align-content: stretch;
-		padding: 0.25rem;
-		flex-wrap: wrap;
-	}
-	#keyboard button {
-		border: none;
-		border-bottom: 4px solid #bbb;
-		border-radius: 0.5rem;
-		font-size: 1.5rem;
-		height: 3rem;
-		flex-grow: 1;
-		margin: 0.25rem 0.25rem;
-		min-width: 3rem;
-		background: #eee;
-	}
+/* Mobile view below */
+body.mobile {
+	overflow: auto;
+}
+body.mobile #main {
+	display: flex;
+	flex-direction: column;
+	width: 100vw;
+}
+body.mobile #grid-table td.cursor { box-shadow: 0 0 0 2px inset blue !important; }
+body.mobile #grid-table td.mirror { box-shadow: 0 0 0 2px inset orange !important; }
+body.mobile #sidebar {
+	overflow: unset;
+	width: calc(100vw - 2em);
+	margin-bottom: 2em;
+}
+body.mobile #solve,
+body.mobile #solve-label,
+body.mobile #toggle-sidebar {
+	display: none;
+}
+body.mobile #table-container {
+	padding: 0 1em;
+	text-align: center;
+}
+body.mobile #clues {
+	padding: 1em 1em 20em 2.5em;
+	height: auto;
+	overflow: visible;
+}
+body.mobile #keyboard {
+	position: fixed;
+	display: flex;
+	z-index: 1000;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	box-sizing: border-box;
+	background: #ddd;
+	align-content: stretch;
+	padding: 0.25rem;
+	flex-wrap: wrap;
+}
+body.mobile #keyboard button {
+	border: none;
+	border-bottom: 4px solid #bbb;
+	border-radius: 0.5rem;
+	font-size: 1.5rem;
+	height: 3rem;
+	flex-grow: 1;
+	margin: 0.25rem 0.25rem;
+	min-width: 3rem;
+	background: #eee;
 }
