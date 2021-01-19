@@ -28,3 +28,8 @@ export function classIf(el, className, condition) {
 	if (condition) el.classList.add(className);
 	else el.classList.remove(className);
 }
+
+export function clearClass(className) {
+	for (const el of [...document.getElementsByClassName(className)])
+		el.classList.remove(className);
+}

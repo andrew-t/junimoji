@@ -242,3 +242,8 @@ body.mobile #keyboard button {
 	from { transform: rotateY(0); }
 	to   { transform: rotateY(360deg); }
 }
+
+.two-letters {
+	background: red !important;
+	color: white;
+}

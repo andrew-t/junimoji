@@ -5,6 +5,7 @@ import numberImage from './number-image.js';
 import { clueCellsText } from './utils.js';
 import isMobile from './mobile.js';
 import updateProgressSpan from './progress.js';
+import detectTwoLetterLights from './two-letters.js';
 
 const preForm = document.getElementById('before'),
 	grid = document.getElementById('grid'),
@@ -269,6 +270,7 @@ function render() {
 	const deleteButton = addEl(keyboard, 'button');
 	setText(deleteButton, '⌫');
 	deleteButton.addEventListener('click', e => emptyCell(cell));
+	detectTwoLetterLights(cells);
 }
 
 function getHash() {
