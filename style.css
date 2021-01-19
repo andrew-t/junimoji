@@ -243,7 +243,8 @@ body.mobile #keyboard button {
 	to   { transform: rotateY(360deg); }
 }
 
-.two-letters {
-	background: red !important;
+.two-letters,
+.island {
+	background: #f88 !important;
 	color: white;
 }
