@@ -2,7 +2,7 @@ import './hide-mirror.js';
 import './collapse-sidebar.js';
 import { addEl, setText, defaultText, inputInt, addInput, classIf } from './dom-tools.js';
 import numberImage from './number-image.js';
-import { clueCellsText } from './utils.js';
+import { clueCellsText, mightBe } from './utils.js';
 import isMobile from './mobile.js';
 import updateProgressSpan from './progress.js';
 import { detectTwoLetterLights, detectIslands } from './extra-rules.js';
@@ -231,13 +231,14 @@ function render() {
 			}
 		}
 	for (const clue of clues) {
-		const txt = clueCellsText(clue);
+		const txt = clueCellsText(clue),
+			visTxt = txt.replace(/•/g, '');
 		if (solving) {
-			classIf(clue.el, 'correct', txt == clue.value.toUpperCase());
+			classIf(clue.el, 'correct', visTxt == clue.value.toUpperCase());
 			classIf(clue.el, 'wrong', !mightBe(txt, clue.value.toUpperCase()));
 		} else {
-			clue.value = txt;
-			setText(clue.el, txt);
+			clue.value = visTxt;
+			setText(clue.el, visTxt);
 		}
 	}
 	if (solving) {
@@ -286,14 +287,4 @@ function getHash() {
 
 function updateLink() {
 	permalink.setAttribute('href', getHash());
-}
-
-function mightBe(guess, clue) {
-	guess = guess.split('');
-	while (guess.length) {
-		const i = clue.indexOf(guess.shift());
-		if (i < 0) return false;
-		clue = clue.substr(i + 1);
-	}
-	return true;
 }
