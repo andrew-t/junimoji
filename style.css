@@ -114,7 +114,7 @@ body:not(.hide-mirror) #grid td.mirror {
 	background: #fdd;
 }
 #grid td.checker.block {
-	background: #800;
+	background: #522;
 	background-image: none !important;
 }
 #grid td.top { border-top: 2px solid black; }
