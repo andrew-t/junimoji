@@ -154,23 +154,39 @@ function start() {
 
 function setCell(cell, letter) {
 	cell.letter = letter;
+	cell.explicitWhite = false;
 	cell.block = false;
 	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].block = false;
+	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].explicitWhite = false;
 	render();
 }
 
 function emptyCell(cell) {
 	cell.letter = null;
+	cell.explicitWhite = false;
 	cell.block = false;
 	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].block = false;
+	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].explicitWhite = false;
 	render();
 }
 
 function toggleBlock(cell) {
 	cell.letter = null;
+	cell.explicitWhite = false;
 	cell.block = !cell.block;
 	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].letter = null;
 	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].block = cell.block;
+	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].explicitWhite = false;
+	render();
+}
+
+function toggleExplicitWhite(cell) {
+	cell.letter = null;
+	cell.block = false;
+	cell.explicitWhite = !cell.explicitWhite;
+	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].letter = null;
+	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].block = false;
+	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].explicitWhite = cell.explicitWhite;
 	render();
 }
 
@@ -207,6 +223,9 @@ function cellKey(e) {
 		case 'Enter':
 			moveCursor(totalWidth - cursorX - 1, totalHeight - cursorY - 1);
 			break;
+		case '.':
+			toggleExplicitWhite(cell);
+			break;
 		default:
 			if (/^[A-Z]$/i.test(e.key))
 				setCell(cell, e.key.toUpperCase());
@@ -227,7 +246,10 @@ function render() {
 				cell.el.classList.add('block');
 			} else {
 				cell.el.classList.remove('block');
-				setText(cell.el, cell.letter || (cells[totalWidth - xi - 1][totalHeight - yi - 1].letter ? '•' : ''));
+				setText(cell.el, cell.letter || (
+					(cell.explicitWhite ||
+					cells[totalWidth - xi - 1][totalHeight - yi - 1].letter)
+						? '•' : ''));
 			}
 		}
 	for (const clue of clues) {
@@ -271,6 +293,9 @@ function render() {
 	const deleteButton = addEl(keyboard, 'button');
 	setText(deleteButton, '⌫');
 	deleteButton.addEventListener('click', e => emptyCell(cell));
+	const dotButton = addEl(keyboard, 'button');
+	setText(dotButton, '•');
+	dotButton.addEventListener('click', e => toggleExplicitWhite(cell));
 	detectTwoLetterLights(cells);
 	detectIslands(cells);
 }
