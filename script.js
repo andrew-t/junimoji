@@ -2,7 +2,7 @@ import './hide-mirror.js';
 import './collapse-sidebar.js';
 import { addEl, setText, defaultText, inputInt, addInput, classIf } from './dom-tools.js';
 import numberImage from './number-image.js';
-import { clueCellsText, mightBe } from './utils.js';
+import { mightBe } from './utils.js';
 import isMobile from './mobile.js';
 import updateProgressSpan from './progress.js';
 import { detectTwoLetterLights, detectIslands } from './extra-rules.js';
@@ -287,15 +287,15 @@ function render() {
 		setText(button, letter.toUpperCase());
 		button.addEventListener('click', e => setCell(cell, letter));
 	}
+	const dotButton = addEl(keyboard, 'button');
+	setText(dotButton, '•');
+	dotButton.addEventListener('click', e => toggleExplicitWhite(cell));
 	const blackButton = addEl(keyboard, 'button');
 	setText(blackButton, '⬛');
 	blackButton.addEventListener('click', e => toggleBlock(cell));
 	const deleteButton = addEl(keyboard, 'button');
 	setText(deleteButton, '⌫');
 	deleteButton.addEventListener('click', e => emptyCell(cell));
-	const dotButton = addEl(keyboard, 'button');
-	setText(dotButton, '•');
-	dotButton.addEventListener('click', e => toggleExplicitWhite(cell));
 	detectTwoLetterLights(cells);
 	detectIslands(cells);
 }
@@ -312,4 +312,20 @@ function getHash() {
 
 function updateLink() {
 	permalink.setAttribute('href', getHash());
+}
+
+function clueCellsText(clue) {
+	let txt = '';
+	for (const cell of clue.cells) {
+		if (cell.block)
+			continue;
+		if (cell.letter)
+			txt += cell.letter.toUpperCase();
+		else if (cell.explicitWhite ||
+			cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].letter)
+			txt += '•';
+		else
+			txt += ' ';
+	}
+	return txt;
 }
