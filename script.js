@@ -1,14 +1,14 @@
+import Grid, { Solving, SolvingPreset, Setting } from './Grid.js';
 import './hide-mirror.js';
 import './collapse-sidebar.js';
 import { addEl, setText, defaultText, inputInt, addInput, classIf, addButton } from './dom-tools.js';
 import numberImage from './number-image.js';
-import { mightBe } from './utils.js';
 import isMobile from './mobile.js';
 import updateProgressSpan from './progress.js';
 import { detectTwoLetterLights, detectIslands } from './extra-rules.js';
 
 const preForm = document.getElementById('before'),
-	grid = document.getElementById('grid'),
+	gridEl = document.getElementById('grid'),
 	clueList = document.getElementById('clues'),
 	titleBox = document.getElementById('title'),
 	authorBox = document.getElementById('author'),
@@ -19,25 +19,19 @@ const preForm = document.getElementById('before'),
 	permalink = document.getElementById('permalink'),
 	keyboard = document.getElementById('keyboard');
 
-let subGridsAcross, subGridsDown,
-	subGridWidth, subGridHeight,
-	totalWidth, totalHeight,
-	solving, setting, preset;
-
-const cells = [],
-	clues = [];
-
-let cursorX = 0, cursorY = 0;
+let grid, cursorX = 0, cursorY = 0;
 
 preForm.addEventListener('submit', e => {
 	e.preventDefault();
-	subGridsAcross = inputInt('subgrids-across');
-	subGridsDown = inputInt('subgrids-down');
-	subGridWidth = inputInt('subgrid-width');
-	subGridHeight = inputInt('subgrid-height');
-	solving = solveTickbox.checked;
-	setting = !solving;
-	preset = false;
+	grid = new Grid(
+		inputInt('subgrids-across'),
+		inputInt('subgrids-down'),
+		inputInt('subgrid-width'),
+		inputInt('subgrid-height'),
+		solveTickbox.checked
+			? Solving
+			: Setting,
+		render);
 	start();
 });
 
@@ -45,104 +39,94 @@ if (window.location.hash) {
 	const parts = window.location.hash.substr(1).split(';');
 	const [w,h,a,d,...c] = parts.pop().split(',');
 	const [title, author] = parts.map(decodeURIComponent);
-	console.log({parts, title, author})
 	if (title) setText(titleBox, title);
 	if (author) setText(authorBox, author);
-	subGridWidth = parseInt(w, 10);
-	subGridHeight = parseInt(h, 10);
-	subGridsAcross = parseInt(a, 10);
-	subGridsDown = parseInt(d, 10);
-	setting = false;
-	solving = true;
-	preset = true;
+	grid = new Grid(
+		parseInt(a, 10),
+		parseInt(d, 10),
+		parseInt(w, 10),
+		parseInt(h, 10),
+		SolvingPreset,
+		render
+	);
 	start();
-	for (const clue of clues) {
+	for (const clue of grid.clues) {
 		clue.value = c[clue.i];
 		if (clue.el.tagName == "SPAN")
 			setText(clue.el, c[clue.i]);
 		else clue.el.value = c[clue.i];
 	}
-	const progress = c[clues.length];
+	const progress = c[grid.clues.length];
 	if (progress)
-		for (let x = 0; x < totalWidth; ++x)
-			for (let y = 0; y < totalHeight; ++y) {
-				const p = progress[x + y * totalWidth];
-				if (p == '=') cells[x][y].block = true;
-				else if (/[A-Z]/i.test(p)) cells[x][y].letter = p;
-			}
-	render();
+		for (const cell of grid.eachCell()) {
+			const p = progress[cell.x + cell.y * grid.totalWidth];
+			if (p == '=') cell.block = true;
+			else if (/[A-Z]/i.test(p)) cell.letter = p;
+		}
+	grid.render();
 }
 
 function start() {
 	preForm.classList.add('hidden');
 	gridTable.addEventListener('keydown', cellKey);
-	totalWidth = subGridWidth * subGridsAcross;
-	totalHeight = subGridHeight * subGridsDown;
-	if (setting) {
+	if (grid.setting) {
 		progressSpan.classList.add('hidden');
 		progressLink.classList.add('hidden');
 		addInput(titleBox, 'title-input', 'Untitled', updateLink);
 		addInput(authorBox, 'author-input', 'Anonymous', updateLink);
 	} else
 		defaultText(authorBox, 'unknown author');
-	for (let i = 0; i < subGridsAcross * subGridsDown; ++i) {
+	for (const clue of grid.clues) {
 		const el = addEl(addEl(clueList, 'li'),
-			(setting || preset) ? 'span' : 'input');
-		const clue = { el, i, value: '', cells: [] };
+			(grid.setting || grid.preset) ? 'span' : 'input');
 		el.classList.add('clue-text');
 		if (el.tagName == "INPUT") {
 			el.setAttribute('required', true);
 			el.addEventListener('change', e => {
 				clue.value = el.value;
-				render();
+				grid.render();
 			});
 		}
-		clues.push(clue);
-		if (solving && !preset)
+		if (grid.solving && !grid.preset)
 			el.addEventListener('change', updateLink);
+		clue.el = el;
 	}
-	for (let xi = 0; xi < totalWidth; ++xi)
-		cells[xi] = [];
-	for (let yi = 0; yi < totalHeight; ++yi) {
-		const el = addEl(grid, 'tr');
-		for (let xi = 0; xi < totalWidth; ++xi) {
-			const cell = cells[xi][yi] = {
-				x: xi,
-				y: yi,
-				subgrid: ~~(yi / subGridHeight) * subGridsAcross + ~~(xi / subGridWidth),
-				block: false,
-				letter: null,
-				el: addEl(el, 'td')
-			};
-			clues[cell.subgrid].cells.push(cell);
-			classIf(cell.el, 'left', xi % subGridWidth == 0);
-			classIf(cell.el, 'right', xi % subGridWidth == subGridWidth - 1);
-			classIf(cell.el, 'top', yi % subGridHeight == 0);
-			classIf(cell.el, 'bottom', yi % subGridHeight == subGridHeight - 1);
-			classIf(cell.el, 'checker', ((xi / subGridWidth) ^ (yi / subGridHeight)) & 1);
+	for (let yi = 0; yi < grid.totalHeight; ++yi) {
+		const row = addEl(gridEl, 'tr');
+		for (let xi = 0; xi < grid.totalWidth; ++xi) {
+			const cell = grid.cell(xi, yi);
+			cell.el = addEl(row, 'td');
+			classIf(cell.el, 'left', xi % grid.subGridWidth == 0);
+			classIf(cell.el, 'right', xi % grid.subGridWidth == grid.subGridWidth - 1);
+			classIf(cell.el, 'top', yi % grid.subGridHeight == 0);
+			classIf(cell.el, 'bottom', yi % grid.subGridHeight == grid.subGridHeight - 1);
+			classIf(cell.el, 'checker', ((xi / grid.subGridWidth) ^ (yi / grid.subGridHeight)) & 1);
 			cell.el.addEventListener('click', e => {
-				grid.focus();
+				gridEl.focus();
 				cursorX = cell.x;
 				cursorY = cell.y;
-				render();
+				grid.render();
 			});
 		}
 	}
-	for (let x = 0; x < subGridsAcross; ++x)
-		for (let y = 0; y < subGridsDown; ++y) {
+	for (let x = 0; x < grid.subGridsAcross; ++x)
+		for (let y = 0; y < grid.subGridsDown; ++y) {
 			const backgroundImage = `url(${numberImage(
-				x + y * subGridsAcross + 1,
+				x + y * grid.subGridsAcross + 1,
 				(x ^ y) & 1
 			)})`;
-			for (let u = 0; u < subGridWidth; ++u)
-				for (let v = 0; v < subGridHeight; ++v) {
-					const xx = (u - subGridWidth / 2) * 2,
-						yy = (v - subGridHeight / 2) * 2;
-					Object.assign(cells[x * subGridWidth + u][y * subGridHeight + v].el.style, {
+			for (let u = 0; u < grid.subGridWidth; ++u)
+				for (let v = 0; v < grid.subGridHeight; ++v) {
+					const xx = (u - grid.subGridWidth / 2) * 2,
+						yy = (v - grid.subGridHeight / 2) * 2;
+					Object.assign(grid.cell(
+						x * grid.subGridWidth + u,
+						y * grid.subGridHeight + v
+					).el.style, {
 						backgroundImage,
 						backgroundScale: `
-							calc(${subGridWidth * 2}rem + ${subGridWidth - 1}px)
-							calc(${subGridHeight * 2}rem + ${subGridHeight - 1}px)`,
+							calc(${grid.subGridWidth * 2}rem + ${grid.subGridWidth - 1}px)
+							calc(${grid.subGridHeight * 2}rem + ${grid.subGridHeight - 1}px)`,
 						backgroundPosition: `
 							calc(${-100 - xx}px - ${xx}rem)
 							calc(${-100 - yy}px - ${yy}rem)`
@@ -152,59 +136,20 @@ function start() {
 		}
 }
 
-function setCell(cell, letter) {
-	cell.letter = letter;
-	cell.explicitWhite = false;
-	cell.block = false;
-	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].block = false;
-	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].explicitWhite = false;
-	render();
-}
-
-function emptyCell(cell) {
-	cell.letter = null;
-	cell.explicitWhite = false;
-	cell.block = false;
-	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].block = false;
-	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].explicitWhite = false;
-	render();
-}
-
-function toggleBlock(cell) {
-	cell.letter = null;
-	cell.explicitWhite = false;
-	cell.block = !cell.block;
-	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].letter = null;
-	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].block = cell.block;
-	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].explicitWhite = false;
-	render();
-}
-
-function toggleExplicitWhite(cell) {
-	if (cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].letter) return;
-	cell.letter = null;
-	cell.block = false;
-	cell.explicitWhite = !cell.explicitWhite;
-	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].letter = null;
-	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].block = false;
-	cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].explicitWhite = cell.explicitWhite;
-	render();
-}
-
 function moveCursor(x, y) {
-	if (x >= 0 && y >= 0 && x < totalWidth && y < totalHeight) {
+	if (x >= 0 && y >= 0 && x < grid.totalWidth && y < grid.totalHeight) {
 		cursorX = x;
 		cursorY = y;
-		render();
+		grid.render();
 	}
 }
 
 function cellKey(e) {
 	if (e.ctrlKey) return;
-	const cell = cells[cursorX][cursorY];
+	const cell = grid.cell(cursorX, cursorY);
 	switch (e.key) {
 		case ' ':
-			toggleBlock(cell);
+			grid.toggleBlock(cell);
 			break;
 		case 'ArrowUp':
 			moveCursor(cursorX, cursorY - 1);
@@ -219,17 +164,17 @@ function cellKey(e) {
 			moveCursor(cursorX + 1, cursorY);
 			break;
 		case 'Backspace':
-			emptyCell(cell);
+			grid.emptyCell(cell);
 			break;
 		case 'Enter':
-			moveCursor(totalWidth - cursorX - 1, totalHeight - cursorY - 1);
+			moveCursor(cell.mirror.x, cell.mirror.y);
 			break;
 		case '.':
-			toggleExplicitWhite(cell);
+			grid.toggleExplicitWhite(cell);
 			break;
 		default:
 			if (/^[A-Z]$/i.test(e.key))
-				setCell(cell, e.key.toUpperCase());
+				grid.setCell(cell, e.key.toUpperCase());
 			else {
 				console.log('Unexpected key:', e);
 				return;
@@ -238,49 +183,41 @@ function cellKey(e) {
 	e.preventDefault();
 };
 
-function render() {
-	for (let xi = 0; xi < totalWidth; ++xi)
-		for (let yi = 0; yi < totalHeight; ++yi) {
-			const cell = cells[xi][yi];
-			if (cell.block) {
-				setText(cell.el, '');
-				cell.el.classList.add('block');
-			} else {
-				cell.el.classList.remove('block');
-				setText(cell.el, cell.letter || (
-					(cell.explicitWhite ||
-					cells[totalWidth - xi - 1][totalHeight - yi - 1].letter)
-						? '•' : ''));
-			}
-		}
-	for (const clue of clues) {
-		const txt = clueCellsText(clue),
-			visTxt = txt.replace(/•/g, '');
-		if (solving) {
-			classIf(clue.el, 'correct', visTxt == clue.value.toUpperCase());
-			classIf(clue.el, 'wrong', !mightBe(txt, clue.value.toUpperCase()));
+function render(grid) {
+	for (const cell of grid.eachCell()) {
+		if (cell.block) {
+			setText(cell.el, '');
+			cell.el.classList.add('block');
 		} else {
-			clue.value = visTxt;
-			setText(clue.el, visTxt);
+			cell.el.classList.remove('block');
+			setText(cell.el, cell.letter || (
+				(cell.explicitWhite || cell.mirror.letter)
+					? '•' : ''));
 		}
 	}
-	if (solving) {
-		updateProgressSpan(cells);
-		let l = '';
-		for (let y = 0; y < totalHeight; ++y)
-			for (let x = 0; x < totalWidth; ++x)
-				l += cells[x][y].block ? '=' : (cells[x][y].letter || '-');
-		updateLink();
-		progressLink.setAttribute('href', `${getHash()},${l}`);
+	for (const clue of grid.clues) {
+		if (grid.solving) {
+			classIf(clue.el, 'correct', grid.isCorrect(clue));
+			classIf(clue.el, 'wrong', !grid.mightBe(clue));
+		} else {
+			const txt = grid.clueCellsText(clue).replace(/[• ]/g, '');
+			clue.value = txt;
+			setText(clue.el, txt);
+		}
 	}
-	if (setting) updateLink();
+	if (grid.solving) {
+		updateProgressSpan(grid);
+		updateLink();
+		progressLink.setAttribute('href', `${getHash()},${grid.toProgressString()}`);
+	}
+	if (grid.setting) updateLink();
 	document.querySelector('.cursor')?.classList.remove('cursor');
 	document.querySelector('.current')?.classList.remove('current');
 	document.querySelector('.mirror')?.classList.remove('mirror');
-	const cell = cells[cursorX][cursorY];
+	const cell = grid.cell(cursorX, cursorY);
 	cell.el.classList.add('cursor');
-	cells[totalWidth - cursorX - 1][totalHeight - cursorY - 1].el.classList.add('mirror');
-	const clue = clues[cell.subgrid];
+	cell.mirror.el.classList.add('mirror');
+	const clue = grid.clues[cell.subgrid];
 	clue.el.classList.add('current');
 	keyboard.innerHTML = '';
 	for (const letter of clue.value) {
@@ -291,8 +228,8 @@ function render() {
 	addButton(keyboard, '•', e => toggleExplicitWhite(cell));
 	addButton(keyboard, '⬛', e => toggleBlock(cell));
 	addButton(keyboard, '⌫', e => emptyCell(cell));
-	detectTwoLetterLights(cells);
-	detectIslands(cells);
+	detectTwoLetterLights(grid.cells);
+	detectIslands(grid.cells);
 }
 
 function getHash() {
@@ -302,25 +239,9 @@ function getHash() {
 	const author = authorBox.innerText
 		|| document.getElementById('author-input')?.value
 		|| 'Anonymous';
-	return `#${encodeURIComponent(title)};${encodeURIComponent(author)};${subGridWidth},${subGridHeight},${subGridsAcross},${subGridsDown},${clues.map(c => c.value).join(',')}`;
+	return `#${encodeURIComponent(title)};${encodeURIComponent(author)};${grid.toSolvingString()}`;
 }
 
 function updateLink() {
 	permalink.setAttribute('href', getHash());
-}
-
-function clueCellsText(clue) {
-	let txt = '';
-	for (const cell of clue.cells) {
-		if (cell.block)
-			continue;
-		if (cell.letter)
-			txt += cell.letter.toUpperCase();
-		else if (cell.explicitWhite ||
-			cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].letter)
-			txt += '•';
-		else
-			txt += ' ';
-	}
-	return txt;
 }

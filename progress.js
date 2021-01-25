@@ -3,18 +3,17 @@ import { addEl } from './dom-tools.js';
 const progressSpan = document.getElementById('progress'),
 	board = document.getElementById('grid-table');
 
-export function percentComplete(cells) {
+export function percentComplete(grid) {
 	let done = 0, total = 0;
-	for (const row of cells)
-		for (const cell of row) {
-			++total;
-			if (cell.block || cell.letter) ++done;
-		}
+	for (const cell of grid.eachCell()) {
+		++total;
+		if (cell.block || cell.letter) ++done;
+	}
 	return done * 100 / total;
 }
 
-export default function updateProgressSpan(cells) {
-	const pc = percentComplete(cells);
+export default function updateProgressSpan(grid) {
+	const pc = percentComplete(grid);
 	progressSpan.innerHTML = `${Math.floor(pc)}% complete `;
 	if (pc == 100) {
 		const button = addEl(progressSpan, 'button');
