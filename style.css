@@ -191,8 +191,8 @@ body.mobile #main {
 	flex-direction: column;
 	width: 100vw;
 }
-body.mobile #grid-table td.cursor { box-shadow: 0 0 0 2px inset blue !important; }
 body.mobile #grid-table td.mirror { box-shadow: 0 0 0 2px inset orange !important; }
+body.mobile #grid-table td.cursor { box-shadow: 0 0 0 2px inset blue !important; }
 body.mobile #sidebar {
 	overflow: unset;
 	width: calc(100vw - 2em);
