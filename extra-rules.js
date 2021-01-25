@@ -6,7 +6,7 @@ function update() {
 	classIf(document.body, 'extra-rules', checkbox.checked);
 	localStorage.setItem('extra-rules', checkbox.checked);
 }
-checkbox.checked = localStorage.getItem('extra-rules') == 'true';
+checkbox.checked = localStorage.getItem('extra-rules') != 'false';
 update();
 
 export function detectTwoLetterLights(cells) {
