@@ -1,6 +1,6 @@
 import './hide-mirror.js';
 import './collapse-sidebar.js';
-import { addEl, setText, defaultText, inputInt, addInput, classIf } from './dom-tools.js';
+import { addEl, setText, defaultText, inputInt, addInput, classIf, addButton } from './dom-tools.js';
 import numberImage from './number-image.js';
 import { mightBe } from './utils.js';
 import isMobile from './mobile.js';
@@ -181,6 +181,7 @@ function toggleBlock(cell) {
 }
 
 function toggleExplicitWhite(cell) {
+	if (cells[totalWidth - 1 - cell.x][totalHeight - 1 - cell.y].letter) return;
 	cell.letter = null;
 	cell.block = false;
 	cell.explicitWhite = !cell.explicitWhite;
@@ -287,15 +288,9 @@ function render() {
 		setText(button, letter.toUpperCase());
 		button.addEventListener('click', e => setCell(cell, letter));
 	}
-	const dotButton = addEl(keyboard, 'button');
-	setText(dotButton, '•');
-	dotButton.addEventListener('click', e => toggleExplicitWhite(cell));
-	const blackButton = addEl(keyboard, 'button');
-	setText(blackButton, '⬛');
-	blackButton.addEventListener('click', e => toggleBlock(cell));
-	const deleteButton = addEl(keyboard, 'button');
-	setText(deleteButton, '⌫');
-	deleteButton.addEventListener('click', e => emptyCell(cell));
+	addButton(keyboard, '•', e => toggleExplicitWhite(cell));
+	addButton(keyboard, '⬛', e => toggleBlock(cell));
+	addButton(keyboard, '⌫', e => emptyCell(cell));
 	detectTwoLetterLights(cells);
 	detectIslands(cells);
 }
