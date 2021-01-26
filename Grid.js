@@ -50,10 +50,10 @@ export default class Grid {
 	}
 
 	cell(x, y) { return this.cells[x]?.[y]; }
-
 	get solving() { return this.mode != Setting; }
 	get setting() { return this.mode == Setting; }
 	get preset() { return this.mode == SolvingPreset; }
+	render() { this.renderer(this); }
 
 	*eachCell() {
 		for (let x = 0; x < this.totalWidth; ++x)
@@ -100,10 +100,6 @@ export default class Grid {
 		this.render();
 	}
 
-	render() {
-		this.renderer(this);
-	}
-
 	toSolvingString() {
 		return `${this.subGridWidth},${this.subGridHeight},${this.subGridsAcross},${this.subGridsDown},${this.clues.map(c => c.value).join(',')}`;
 	}
@@ -145,5 +141,12 @@ export default class Grid {
 
 	isCorrect(clue) {
 		return this.clueCellsText(clue).replace(/[• ]/g, '.') == clue.value.toUpperCase();
+	}
+
+	percentComplete() {
+		let done = 0;
+		for (const cell of this.eachCell())
+			if (cell.block || cell.letter) ++done;
+		return done * 100 / (this.totalWidth * this.totalHeight);
 	}
 }
