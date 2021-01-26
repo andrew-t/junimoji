@@ -102,8 +102,10 @@ export default class Grid {
 
 	toSolvingString(solutionHash) {
 		let s = `${this.subGridWidth},${this.subGridHeight},${this.subGridsAcross},${this.subGridsDown},${this.clues.map(c => c.value).join(',')}`;
-		if (solutionHash) s += `/${solutionHash}`;
-		else if (this.percentComplete() == 100) s += `/${this.toHashString()}`;
+		if (solutionHash)
+			s += `/${solutionHash}`;
+		else if (this.mode == Setting && this.percentComplete() == 100)
+			s += `/${this.toHashString()}`;
 		return s;
 	}
 
