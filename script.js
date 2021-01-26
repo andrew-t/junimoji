@@ -41,6 +41,9 @@ if (window.location.hash) {
 	const [title, author] = parts.map(decodeURIComponent);
 	if (title) setText(titleBox, title);
 	if (author) setText(authorBox, author);
+	document.title = 'Junimoji'
+		+ (title ? ` - "${title}"` : '')
+		+ (author ? ` by ${author}` : '');
 	grid = new Grid(
 		parseInt(a, 10),
 		parseInt(d, 10),
