@@ -69,6 +69,9 @@ export default class Grid {
 		cell.mirror.explicitWhite = false;
 		this.render();
 	}
+	
+	// true if there's a cell at {x,y} and it's not a block
+	isOpen(x, y) { return !(this.cells[x]?.[y]?.block ?? true); }
 
 	emptyCell(cell) {
 		cell.letter = null;

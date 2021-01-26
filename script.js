@@ -5,6 +5,7 @@ import numberImage from './number-image.js';
 import updateProgressSpan from './progress.js';
 import { detectTwoLetterLights, detectIslands } from './extra-rules.js';
 import getCheckbox from './checkbox.js';
+import checkSpelling from './dictionary.js';
 
 const preForm = document.getElementById('before'),
 	gridEl = document.getElementById('grid'),
@@ -239,8 +240,9 @@ function render(grid) {
 	addButton(keyboard, '•', e => grid.toggleExplicitWhite(cell));
 	addButton(keyboard, '⬛', e => grid.toggleBlock(cell));
 	addButton(keyboard, '⌫', e => grid.emptyCell(cell));
-	detectTwoLetterLights(grid.cells);
-	detectIslands(grid.cells);
+	detectTwoLetterLights(grid);
+	detectIslands(grid);
+	checkSpelling(grid);
 	if (solutionHash) {
 		classIf(onTheCard, 'hidden', grid.percentComplete() < 100);
 		setText(onTheCard, grid.toHashString() == solutionHash

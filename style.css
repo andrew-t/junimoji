@@ -239,6 +239,10 @@ body.mobile #keyboard button {
 	to   { transform: rotateY(360deg); }
 }
 
+.spellcheck .misteak {
+	background: #fc6 !important;
+	color: red;
+}
 .extra-rules .two-letters,
 .extra-rules .island {
 	background: #f88 !important;

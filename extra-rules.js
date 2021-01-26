@@ -3,30 +3,30 @@ import getCheckbox from './checkbox.js';
 
 getCheckbox('extra-rules', true);
 
-export function detectTwoLetterLights(cells) {
+export function detectTwoLetterLights(grid) {
 	clearClass('two-letters');
-	for (const row of cells) for (const cell of row) {
+	for (const cell of grid.eachCell()) {
 		if (cell.block) continue;
 		const { x, y } = cell;
-		if (!isOpen(cells, x - 1, y) &&
-			isOpen(cells, x + 1, y) &&
-			!isOpen(cells, x + 2, y)) {
-			cells[x][y].el.classList.add('two-letters');
-			cells[x + 1][y].el.classList.add('two-letters');
+		if (!grid.isOpen(x - 1, y) &&
+			grid.isOpen(x + 1, y) &&
+			!grid.isOpen(x + 2, y)) {
+			grid.cell(x, y).el.classList.add('two-letters');
+			grid.cell(x + 1, y).el.classList.add('two-letters');
 		}
-		if (!isOpen(cells, x, y - 1) &&
-			isOpen(cells, x, y + 1) &&
-			!isOpen(cells, x, y + 2)) {
-			cells[x][y].el.classList.add('two-letters');
-			cells[x][y + 1].el.classList.add('two-letters');
+		if (!grid.isOpen(x, y - 1) &&
+			grid.isOpen(x, y + 1) &&
+			!grid.isOpen(x, y + 2)) {
+			grid.cell(x, y).el.classList.add('two-letters');
+			grid.cell(x, y + 1).el.classList.add('two-letters');
 		}
 	}
 }
 
-export function detectIslands(cells) {
+export function detectIslands(grid) {
 	clearClass('island');
 	const islands = [];
-	for (const row of cells) for (const cell of row) {
+	for (const cell of grid.eachCell()) {
 		if (cell.block) continue;
 		const island = new Set([ cell ]);
 		check(cell, -1, 0, island);
@@ -44,7 +44,7 @@ export function detectIslands(cells) {
 	function check(preCell, dx, dy, preIsland) {
 		const x = preCell.x + dx,
 			y = preCell.y + dy;
-		const cell = cells[x]?.[y];
+		const cell = grid.cell(x, y);
 		if (!cell || cell.block) return;
 		for (const island of islands)
 			if (island.has(cell)) {
@@ -54,14 +54,6 @@ export function detectIslands(cells) {
 				return;
 			}
 	}
-}
-
-function set(cells, x, y) {
-	cells[x][y].el
-}
-
-function isOpen(cells, x, y) {
-	return !(cells[x]?.[y]?.block ?? true);
 }
 
 function removeArrEl(all, one) {
