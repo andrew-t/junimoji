@@ -228,14 +228,11 @@ function render(grid) {
 	const clue = grid.clues[cell.subgrid];
 	clue.el.classList.add('current');
 	keyboard.innerHTML = '';
-	for (const letter of clue.value) {
-		const button = addEl(keyboard, 'button');
-		setText(button, letter.toUpperCase());
-		button.addEventListener('click', e => setCell(cell, letter));
-	}
-	addButton(keyboard, '•', e => toggleExplicitWhite(cell));
-	addButton(keyboard, '⬛', e => toggleBlock(cell));
-	addButton(keyboard, '⌫', e => emptyCell(cell));
+	for (const letter of clue.value)
+		addButton(keyboard, letter.toUpperCase(), e => grid.setCell(cell, letter));
+	addButton(keyboard, '•', e => grid.toggleExplicitWhite(cell));
+	addButton(keyboard, '⬛', e => grid.toggleBlock(cell));
+	addButton(keyboard, '⌫', e => grid.emptyCell(cell));
 	detectTwoLetterLights(grid.cells);
 	detectIslands(grid.cells);
 	if (solutionHash) {
