@@ -100,8 +100,11 @@ export default class Grid {
 		this.render();
 	}
 
-	toSolvingString() {
-		return `${this.subGridWidth},${this.subGridHeight},${this.subGridsAcross},${this.subGridsDown},${this.clues.map(c => c.value).join(',')}`;
+	toSolvingString(solutionHash) {
+		let s = `${this.subGridWidth},${this.subGridHeight},${this.subGridsAcross},${this.subGridsDown},${this.clues.map(c => c.value).join(',')}`;
+		if (solutionHash) s += `/${solutionHash}`;
+		else if (this.percentComplete() == 100) s += `/${this.toHashString()}`;
+		return s;
 	}
 
 	toProgressString() {
@@ -112,6 +115,13 @@ export default class Grid {
 				l += cell.block ? '=' : (cell.letter || '-');
 			}
 		return l;
+	}
+
+	toHashString() {
+		let i = 0;
+		for (const c of this.toProgressString().split(''))
+			i = ~~(i * 111317 + c.charCodeAt(0) * 198733);
+		return i.toString(36);
 	}
 
 	clueCellsText(clue) {

@@ -16,10 +16,11 @@ const preForm = document.getElementById('before'),
 	progressLink = document.getElementById('progress-link'),
 	gridTable = document.getElementById('grid-table'),
 	solveTickbox = document.getElementById('solve'),
+	onTheCard = document.getElementById('on-the-card'),
 	permalink = document.getElementById('permalink'),
 	keyboard = document.getElementById('keyboard');
 
-let grid, cursorX = 0, cursorY = 0;
+let grid, cursorX = 0, cursorY = 0, solutionHash;
 
 preForm.addEventListener('submit', e => {
 	e.preventDefault();
@@ -54,10 +55,13 @@ if (window.location.hash) {
 	);
 	start();
 	for (const clue of grid.clues) {
-		clue.value = c[clue.i];
-		if (clue.el.tagName == "SPAN")
-			setText(clue.el, c[clue.i]);
-		else clue.el.value = c[clue.i];
+		const { i, el } = clue;
+		const [ clueValue, _solutionHash ] = c[i].split('/');
+		if (_solutionHash) solutionHash = _solutionHash;
+		clue.value = clueValue;
+		if (el.tagName == "SPAN")
+			setText(el, clueValue);
+		else el.value = clueValue;
 	}
 	const progress = c[grid.clues.length];
 	if (progress)
@@ -70,6 +74,7 @@ if (window.location.hash) {
 }
 
 function start() {
+	window.__grid = grid; // for debug
 	preForm.classList.add('hidden');
 	gridTable.addEventListener('keydown', cellKey);
 	if (grid.setting) {
@@ -233,6 +238,12 @@ function render(grid) {
 	addButton(keyboard, '⌫', e => emptyCell(cell));
 	detectTwoLetterLights(grid.cells);
 	detectIslands(grid.cells);
+	if (solutionHash) {
+		classIf(onTheCard, 'hidden', grid.percentComplete() < 100);
+		setText(onTheCard, grid.toHashString() == solutionHash
+			? "That's the answer on the card!"
+			: "That's not the answer on the card.");
+	}
 }
 
 function getHash() {
@@ -242,7 +253,7 @@ function getHash() {
 	const author = authorBox.innerText
 		|| document.getElementById('author-input')?.value
 		|| 'Anonymous';
-	return `#${encodeURIComponent(title)};${encodeURIComponent(author)};${grid.toSolvingString()}`;
+	return `#${encodeURIComponent(title)};${encodeURIComponent(author)};${grid.toSolvingString(solutionHash)}`;
 }
 
 function updateLink() {
