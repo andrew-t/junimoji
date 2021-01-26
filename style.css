@@ -98,13 +98,10 @@ table {
 	background-image: none !important;
 }
 
-body:not(.hide-mirror) #grid td.mirror {
-	box-shadow: 0 0 0 2px inset orange;
-}
-
-#grid td.cursor {
-	box-shadow: 0 0 0 2px inset blue !important;
-}
+body:not(.hide-mirror) #grid td.mirror { box-shadow: 0 0 0 2px inset orange; }
+#grid td.cursor { box-shadow: 0 0 0 2px inset #08f !important; }
+body:not(.hide-mirror) #grid td.block.mirror { box-shadow: 0 0 0 2px inset #840; }
+#grid td.block.cursor { box-shadow: 0 0 0 2px inset #48f !important; }
 
 #grid:focus {
 	outline: none;
@@ -192,7 +189,9 @@ body.mobile #main {
 	width: 100vw;
 }
 body.mobile #grid-table td.mirror { box-shadow: 0 0 0 2px inset orange !important; }
-body.mobile #grid-table td.cursor { box-shadow: 0 0 0 2px inset blue !important; }
+body.mobile #grid-table td.cursor { box-shadow: 0 0 0 2px inset #08f !important; }
+body.mobile #grid-table td.block.mirror { box-shadow: 0 0 0 2px inset #840 !important; }
+body.mobile #grid-table td.block.cursor { box-shadow: 0 0 0 2px inset #48f !important; }
 body.mobile #sidebar {
 	overflow: unset;
 	width: calc(100vw - 2em);
