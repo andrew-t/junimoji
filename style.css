@@ -248,3 +248,9 @@ body.mobile #keyboard button {
 	background: #f88 !important;
 	color: white;
 }
+
+@media (prefers-color-scheme: dark) {
+	body { background: black; color: white; }
+	.current { background: #880 !important; }
+	td { color: black; }
+}
