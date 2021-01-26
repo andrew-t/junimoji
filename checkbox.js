@@ -6,6 +6,7 @@ export default function checkbox(id, defaultValue, onUpdate) {
 	checkbox.checked = val ? val == 'true' : defaultValue;
 	update();
 	checkbox.addEventListener('click', update);
+	return checkbox;
 	function update() {
 		classIf(document.body, id, checkbox.checked);
 		onUpdate?.(checkbox.checked);

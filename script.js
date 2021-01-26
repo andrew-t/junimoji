@@ -13,10 +13,10 @@ const preForm = document.getElementById('before'),
 	authorBox = document.getElementById('author'),
 	progressSpan = document.getElementById('progress'),
 	progressLink = document.getElementById('progress-link'),
+	onTheCard = document.getElementById('on-the-card'),
 	gridTable = document.getElementById('grid-table'),
 	solveTickbox = document.getElementById('solve'),
-	fastMode = document.getElementById('fast-mode'),
-	onTheCard = document.getElementById('on-the-card'),
+	fastMode = getCheckbox('fast-mode', false),
 	permalink = document.getElementById('permalink'),
 	keyboard = document.getElementById('keyboard');
 
@@ -108,9 +108,18 @@ function start() {
 			classIf(cell.el, 'bottom', yi % grid.subGridHeight == grid.subGridHeight - 1);
 			classIf(cell.el, 'checker', ((xi / grid.subGridWidth) ^ (yi / grid.subGridHeight)) & 1);
 			cell.el.addEventListener('click', e => {
-				gridEl.focus();
 				cursorX = cell.x;
 				cursorY = cell.y;
+				if (fastMode.checked) {
+					grid.toggleBlock(cell);
+					for (const clue of grid.clues)
+						if (grid.clueCellsText(clue).length == clue.value.length) {
+							let c = clue.value.split('');
+							for (const cell of clue.cells)
+								if (!cell.block) grid.setCell(cell, c.shift());
+						} else for (const cell of clue.cells)
+							if (!cell.block) grid.emptyCell(cell);
+				} else gridEl.focus();
 				grid.render();
 			});
 		}

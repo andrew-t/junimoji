@@ -205,6 +205,7 @@ body.mobile #clues {
 	height: auto;
 	overflow: visible;
 }
+body.fast-mode #keyboard { display: none !important; }
 body.mobile #keyboard {
 	position: fixed;
 	display: flex;
