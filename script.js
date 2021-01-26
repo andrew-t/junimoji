@@ -1,11 +1,10 @@
 import Grid, { Solving, SolvingPreset, Setting } from './Grid.js';
-import './hide-mirror.js';
 import './collapse-sidebar.js';
 import { addEl, setText, defaultText, inputInt, addInput, classIf, addButton } from './dom-tools.js';
 import numberImage from './number-image.js';
-import isMobile from './mobile.js';
 import updateProgressSpan from './progress.js';
 import { detectTwoLetterLights, detectIslands } from './extra-rules.js';
+import getCheckbox from './checkbox.js';
 
 const preForm = document.getElementById('before'),
 	gridEl = document.getElementById('grid'),
@@ -16,6 +15,7 @@ const preForm = document.getElementById('before'),
 	progressLink = document.getElementById('progress-link'),
 	gridTable = document.getElementById('grid-table'),
 	solveTickbox = document.getElementById('solve'),
+	fastMode = document.getElementById('fast-mode'),
 	onTheCard = document.getElementById('on-the-card'),
 	permalink = document.getElementById('permalink'),
 	keyboard = document.getElementById('keyboard');
@@ -29,9 +29,7 @@ preForm.addEventListener('submit', e => {
 		inputInt('subgrids-down'),
 		inputInt('subgrid-width'),
 		inputInt('subgrid-height'),
-		solveTickbox.checked
-			? Solving
-			: Setting,
+		solveTickbox.checked ? Solving : Setting,
 		render);
 	start();
 });
@@ -256,3 +254,8 @@ function getHash() {
 function updateLink() {
 	permalink.setAttribute('href', getHash());
 }
+
+getCheckbox('hide-mirror', false);
+getCheckbox('mobile',
+	window.matchMedia('screen and (hover: none) and (pointer: coarse)').matches,
+	checked => window.scrollTo(0, 0));

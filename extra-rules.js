@@ -1,13 +1,7 @@
 import { classIf, clearClass } from './dom-tools.js';
+import getCheckbox from './checkbox.js';
 
-const checkbox = document.getElementById('extra-rules');
-checkbox.addEventListener('click', update);
-function update() {
-	classIf(document.body, 'extra-rules', checkbox.checked);
-	localStorage.setItem('extra-rules', checkbox.checked);
-}
-checkbox.checked = localStorage.getItem('extra-rules') != 'false';
-update();
+getCheckbox('extra-rules', true);
 
 export function detectTwoLetterLights(cells) {
 	clearClass('two-letters');
