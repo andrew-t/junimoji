@@ -76,7 +76,6 @@ function start() {
 	preForm.classList.add('hidden');
 	gridTable.addEventListener('keydown', cellKey);
 	if (grid.setting) {
-		progressSpan.classList.add('hidden');
 		progressLink.classList.add('hidden');
 		addInput(titleBox, 'title-input', 'Untitled', updateLink);
 		addInput(authorBox, 'author-input', 'Anonymous', updateLink);
@@ -220,8 +219,8 @@ function render(grid) {
 			setText(clue.el, txt);
 		}
 	}
+	updateProgressSpan(grid);
 	if (grid.solving) {
-		updateProgressSpan(grid);
 		updateLink();
 		progressLink.setAttribute('href', `${getHash()},${grid.toProgressString()}`);
 	}
