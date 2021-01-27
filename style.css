@@ -250,7 +250,7 @@ body.mobile #keyboard button {
 }
 
 @media (prefers-color-scheme: dark) {
-	body { background: black; color: white; }
-	.current { background: #880 !important; }
-	td { color: black; }
+	body:not(.disable-dark-mode) { background: black; color: white; }
+	body:not(.disable-dark-mode) .current { background: #880 !important; }
+	body:not(.disable-dark-mode) td { color: black; }
 }

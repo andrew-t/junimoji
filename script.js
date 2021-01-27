@@ -266,6 +266,7 @@ function updateLink() {
 }
 
 getCheckbox('hide-mirror', false);
+getCheckbox('disable-dark-mode', false);
 getCheckbox('mobile',
 	window.matchMedia('screen and (hover: none) and (pointer: coarse)').matches,
 	checked => window.scrollTo(0, 0));
