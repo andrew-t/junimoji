@@ -61,38 +61,35 @@ export default class Grid {
 				yield this.cell(x, y);
 	}
 
-	setCell(cell, letter) {
+	setCell(cell, letter, render = true) {
 		cell.letter = letter;
 		cell.explicitWhite = false;
 		cell.block = false;
 		cell.mirror.block = false;
 		cell.mirror.explicitWhite = false;
-		this.render();
+		if (render) this.render();
 	}
-	
-	// true if there's a cell at {x,y} and it's not a block
-	isOpen(x, y) { return !(this.cells[x]?.[y]?.block ?? true); }
 
-	emptyCell(cell) {
+	emptyCell(cell, render = true) {
 		cell.letter = null;
 		cell.explicitWhite = false;
 		cell.block = false;
 		cell.mirror.block = false;
 		cell.mirror.explicitWhite = false;
-		this.render();
+		if (render) this.render();
 	}
 
-	toggleBlock(cell) {
+	toggleBlock(cell, render = true) {
 		cell.letter = null;
 		cell.explicitWhite = false;
 		cell.block = !cell.block;
 		cell.mirror.letter = null;
 		cell.mirror.block = cell.block;
 		cell.mirror.explicitWhite = false;
-		this.render();
+		if (render) this.render();
 	}
 
-	toggleExplicitWhite(cell) {
+	toggleExplicitWhite(cell, render = true) {
 		if (cell.mirror.letter) return;
 		cell.letter = null;
 		cell.block = false;
@@ -100,8 +97,11 @@ export default class Grid {
 		cell.mirror.letter = null;
 		cell.mirror.block = false;
 		cell.mirror.explicitWhite = cell.explicitWhite;
-		this.render();
+		if (render) this.render();
 	}
+	
+	// true if there's a cell at {x,y} and it's not a block
+	isOpen(x, y) { return !(this.cells[x]?.[y]?.block ?? true); }
 
 	toSolvingString(solutionHash) {
 		let s = `${this.subGridWidth},${this.subGridHeight},${this.subGridsAcross},${this.subGridsDown},${this.clues.map(c => c.value).join(',')}`;

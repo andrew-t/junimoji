@@ -116,9 +116,9 @@ function start() {
 						if (grid.clueCellsText(clue).length == clue.value.length) {
 							let c = clue.value.split('');
 							for (const cell of clue.cells)
-								if (!cell.block) grid.setCell(cell, c.shift());
+								if (!cell.block) grid.setCell(cell, c.shift(), false);
 						} else for (const cell of clue.cells)
-							if (!cell.block) grid.emptyCell(cell);
+							if (!cell.block) grid.emptyCell(cell, false);
 				} else gridEl.focus();
 				grid.render();
 			});
