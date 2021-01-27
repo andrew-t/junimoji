@@ -254,3 +254,6 @@ body.mobile #keyboard button {
 	body:not(.disable-dark-mode) .current { background: #880 !important; }
 	body:not(.disable-dark-mode) td { color: black; }
 }
+
+body.fast-mode #grid-table td.mirror { box-shadow: none !important; }
+body.fast-mode #grid-table td.cursor { box-shadow: none !important; }

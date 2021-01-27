@@ -160,7 +160,7 @@ function moveCursor(x, y) {
 }
 
 function cellKey(e) {
-	if (e.ctrlKey) return;
+	if (fastMode.checked || e.metaKey || e.ctrlKey) return;
 	const cell = grid.cell(cursorX, cursorY);
 	switch (e.key) {
 		case ' ':
