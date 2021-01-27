@@ -16,57 +16,75 @@
 	</form>
 	<div id="main">
 		<div id="sidebar">
-			<h1><a href="https://twitter.com/junimojis">Junimoji</a></h1>
-			<h2 id="title"></h2>
-			<span class="attribution">
-				by <span id="author"></span>
-			</span>
-			<p>
-				You are making a crossword using the letters below.
-				The empty, black squares are not given —
-				you will need to deduce them
-				and enter them using the space bar.
-				The completed crossword will be a valid grid,
-				i.e., all words will be in the dictionary,
-				the grid will have twofold rotational symmetry,
-				all words will be connected to each other,
-				and there will be no two-letter words.
-				For each subgrid, you have been given the letters that go there,
-				in the order they appear,
-				going from left to right, top to bottom.
-			</p><p>
-				Move the cursor with the arrow keys. Switch to the orange mirror cursor using enter enter letters with the letter keys. Add a • to a cell to mark it as not black using the full stop key.
-			</p>
-			<div class="spacer"></div>
-			<label>
-				<input type="checkbox" id="hide-mirror">
-				Hide mirror cursor
-			</label>
-			<label>
-				<input type="checkbox" id="mobile">
-				Mobile-friendly mode
-			</label>
-			<label>
-				<input type="checkbox" id="disable-dark-mode">
-				Disable dark mode
-			</label>
-			<label>
-				<input type="checkbox" id="fast-mode">
-				One-tap solving
-			</label>
-			<label>
-				<input type="checkbox" id="spellcheck">
-				Spellcheck
-			</label>
-			<label>
-				<input type="checkbox" id="extra-rules">
-				Highlight islands and two-letter words
-			</label>
-			<a href="" id="permalink" target="_blank">Link to solve</a>
-			<span id="progress"></span>
-			<span id="on-the-card"></span>
-			<a id="progress-link">Continue from here</a>
-			<a href="https://github.com/andrew-t/junimoji/">Source code and readme</a>
+			<div class="expanded tab">
+				<div class="toggle" tabindex="0">Junimoji</div>
+				<div class="contents">
+					<h1 id="title"></h1>
+					<span class="attribution">
+						by <span id="author"></span>
+					</span>
+					<p>
+						<a href="https://twitter.com/junimojis">Junimoji</a> is a puzzle invented by <a href="https://twitter.com/frizfrizzle">Friz</a>.
+					</p><p>
+						You are making a crossword using the letters below.
+						The empty, black squares are not given —
+						you will need to deduce them
+						and enter them using the space bar.
+						The completed crossword will be a valid grid,
+						i.e., all words will be in the dictionary,
+						the grid will have twofold rotational symmetry,
+						all words will be connected to each other,
+						and there will be no two-letter words.
+						For each subgrid, you have been given the letters that go there,
+						in the order they appear,
+						going from left to right, top to bottom.
+					</p><p>
+						Move the cursor with the arrow keys. Switch to the orange mirror cursor using enter enter letters with the letter keys. Add a • to a cell to mark it as not black using the full stop key.
+					</p>
+					<a href="https://github.com/andrew-t/junimoji/">Source code and readme</a>
+				</div>
+			</div>
+			<div class="tab">
+				<div class="toggle" tabindex="0">Options</div>
+				<div class="contents">
+					<label>
+						<input type="checkbox" id="hide-mirror">
+						Hide mirror cursor
+					</label>
+					<p>This is the orange cursor that does nothing but track the square opposite the "real" blue cursor to help with the symmetry.</p>
+					<label>
+						<input type="checkbox" id="mobile">
+						Mobile-friendly mode
+					</label>
+					<p>A portrait layout with an onscreen keyboard.</p>
+					<label>
+						<input type="checkbox" id="disable-dark-mode">
+						Disable dark mode
+					</label>
+					<p>By default if your device is set to "dark mode" the background will be black. This disables that.</p>
+					<label>
+						<input type="checkbox" id="fast-mode">
+						One-tap solving
+					</label>
+					<p>A quick way to solve 9&times;9 puzzles on mobile: the only control is tap a square to toggle it being black — the letters will appear when there are the right number of white squares in the subgrid.</p>
+					<label>
+						<input type="checkbox" id="spellcheck">
+						Spellcheck
+					</label>
+					<p>Highlight words in orange if they're not in a limited dictionary. Some puzzles may include words outside that dictionary but it might help you spot simple typos.</p>
+					<label>
+						<input type="checkbox" id="extra-rules">
+						Highlight islands and two-letter words
+					</label>
+					<p>Highlight cells in red if they make a two-letter word or are not connected to the main puzzle.</p>
+				</div>
+			</div>
+			<div class="bottom-panel">
+				<a href="" id="permalink" target="_blank">Link to solve</a>
+				<span id="progress"></span>
+				<span id="on-the-card"></span>
+				<a id="progress-link">Continue from here</a>
+			</div>
 			<button id="toggle-sidebar"></button>
 		</div>
 		<div id="table-container">
