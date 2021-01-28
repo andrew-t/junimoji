@@ -8,9 +8,11 @@ button.addEventListener('click',
 
 for (const tab of document.querySelectorAll('.tab')) {
 	const toggle = tab.querySelector('.toggle');
-	toggle.addEventListener('click', e => {
+	toggle.addEventListener('click', focus);
+	tab.addEventListener('focusin', focus);
+	function focus() {
 		clearClass('expanded');
 		tab.scrollTo(0, 0);
 		tab.classList.add('expanded');
-	});
+	}
 }
