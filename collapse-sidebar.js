@@ -11,6 +11,7 @@ for (const tab of document.querySelectorAll('.tab')) {
 	toggle.addEventListener('click', focus);
 	tab.addEventListener('focusin', focus);
 	function focus() {
+		if (tab.classList.contains('expanded')) return;
 		clearClass('expanded');
 		tab.scrollTo(0, 0);
 		tab.classList.add('expanded');

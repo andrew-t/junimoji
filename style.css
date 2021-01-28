@@ -291,6 +291,10 @@ body.mobile #keyboard button {
 	to   { transform: rotateY(360deg); }
 }
 
+.detect-repeated-words .repeated-word {
+	background: #8cf !important;
+	color: blue;
+}
 .spellcheck .misteak {
 	background: #fc6 !important;
 	color: red;
