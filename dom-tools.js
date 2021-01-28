@@ -17,8 +17,19 @@ export function defaultText(el, text) {
 	if (!el.innerText) setText(el, text);
 }
 
-export function addInput(parent, id, value, onChange) {
-	const input = addEl(parent, 'input');
+export function addInput(parent, id, label, value, onChange) {
+	const labelEl = addEl(parent, 'label');
+	setText(labelEl, label);
+	const input = addEl(labelEl, 'input');
+	input.id = id;
+	input.value = value;
+	input.addEventListener('change', onChange);
+}
+
+export function addTextArea(parent, id, label, value, onChange) {
+	const labelEl = addEl(parent, 'label');
+	setText(labelEl, label);
+	const input = addEl(labelEl, 'textarea');
 	input.id = id;
 	input.value = value;
 	input.addEventListener('change', onChange);

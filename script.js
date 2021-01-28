@@ -1,6 +1,6 @@
 import Grid, { Solving, SolvingPreset, Setting } from './Grid.js';
 import './collapse-sidebar.js';
-import { addEl, setText, defaultText, inputInt, addInput, classIf, addButton } from './dom-tools.js';
+import { addEl, setText, defaultText, inputInt, addInput, classIf, addButton, addTextArea } from './dom-tools.js';
 import numberImage from './number-image.js';
 import updateProgressSpan from './progress.js';
 import { detectTwoLetterLights, detectIslands } from './extra-rules.js';
@@ -12,6 +12,7 @@ const preForm = document.getElementById('before'),
 	clueList = document.getElementById('clues'),
 	titleBox = document.getElementById('title'),
 	authorBox = document.getElementById('author'),
+	blurbBox = document.getElementById('blurb'),
 	progressSpan = document.getElementById('progress'),
 	progressLink = document.getElementById('progress-link'),
 	onTheCard = document.getElementById('on-the-card'),
@@ -38,9 +39,10 @@ preForm.addEventListener('submit', e => {
 if (window.location.hash) {
 	const parts = window.location.hash.substr(1).split(';');
 	const [w,h,a,d,...c] = parts.pop().split(',');
-	const [title, author] = parts.map(decodeURIComponent);
+	const [title, author, blurb] = parts.map(decodeURIComponent);
 	if (title) setText(titleBox, title);
 	if (author) setText(authorBox, author);
+	if (blurb) setText(blurbBox, blurb);
 	document.title = 'Junimoji'
 		+ (title ? ` - "${title}"` : '')
 		+ (author ? ` by ${author}` : '');
@@ -78,10 +80,13 @@ function start() {
 	gridTable.addEventListener('keydown', cellKey);
 	if (grid.setting) {
 		progressLink.classList.add('hidden');
-		addInput(titleBox, 'title-input', 'Untitled', updateLink);
-		addInput(authorBox, 'author-input', 'Anonymous', updateLink);
-	} else
+		addInput(titleBox, 'title-input', 'Title', 'Untitled', updateLink);
+		addInput(authorBox, 'author-input', 'Author', 'Anonymous', updateLink);
+		addTextArea(blurbBox, 'blurb-input', 'Blurb', '', updateLink);
+	} else {
+		defaultText(titleBox, 'Junimoji');
 		defaultText(authorBox, 'unknown author');
+	}
 	for (const clue of grid.clues) {
 		const el = addEl(addEl(clueList, 'li'),
 			(grid.setting || grid.preset) ? 'span' : 'input');
@@ -116,9 +121,9 @@ function start() {
 						if (grid.clueCellsText(clue).length == clue.value.length) {
 							let c = clue.value.split('');
 							for (const cell of clue.cells)
-								if (!cell.block) grid.setCell(cell, c.shift(), false);
+								if (!cell.block) grid.setCell(cell, c.shift());
 						} else for (const cell of clue.cells)
-							if (!cell.block) grid.emptyCell(cell, false);
+							if (!cell.block) grid.emptyCell(cell);
 				} else gridEl.focus();
 				grid.render();
 			});
@@ -258,7 +263,10 @@ function getHash() {
 	const author = authorBox.innerText
 		|| document.getElementById('author-input')?.value
 		|| 'Anonymous';
-	return `#${encodeURIComponent(title)};${encodeURIComponent(author)};${grid.toSolvingString(solutionHash)}`;
+	const blurb = blurbBox.innerText
+		|| document.getElementById('blurb-input')?.value
+		|| '';
+	return `#${encodeURIComponent(title)};${encodeURIComponent(author)};${encodeURIComponent(blurb)};${grid.toSolvingString(solutionHash)}`;
 }
 
 function updateLink() {
