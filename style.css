@@ -54,11 +54,24 @@ body {
 .tab .toggle {
 	padding: 1em;
 	height: 1em;
+	line-height: 1em;
 	position: sticky;
 	top: 0;
 	background: #888;
 	color: white;
 	cursor: pointer;
+}
+.tab:not(.expanded) + .tab .toggle {
+	border-top: 1px solid #444;
+}
+.tab .toggle:before {
+	transition: transform 300ms;
+	content: '▶';
+	margin-right: 0.5em;
+	display: inline-block;
+}
+.expanded.tab .toggle:before {
+	transform: rotate(-30deg) translate(0.1em, -0.1rem);
 }
 .tab .contents {
 	padding: 0 1em;
