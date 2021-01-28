@@ -53,7 +53,15 @@ export default class Grid {
 	get solving() { return this.mode != Setting; }
 	get setting() { return this.mode == Setting; }
 	get preset() { return this.mode == SolvingPreset; }
-	render() { this.renderer(this); }
+	
+	render() {
+		if (this.renderEnqueued) return;
+		this.renderEnqueued = true;
+		window.requestAnimationFrame(() => {
+			this.renderer(this);
+			this.renderEnqueued = false;
+		});
+	}
 
 	*eachCell() {
 		for (let x = 0; x < this.totalWidth; ++x)
@@ -61,35 +69,35 @@ export default class Grid {
 				yield this.cell(x, y);
 	}
 
-	setCell(cell, letter, render = true) {
+	setCell(cell, letter) {
 		cell.letter = letter;
 		cell.explicitWhite = false;
 		cell.block = false;
 		cell.mirror.block = false;
 		cell.mirror.explicitWhite = false;
-		if (render) this.render();
+		this.render();
 	}
 
-	emptyCell(cell, render = true) {
+	emptyCell(cell) {
 		cell.letter = null;
 		cell.explicitWhite = false;
 		cell.block = false;
 		cell.mirror.block = false;
 		cell.mirror.explicitWhite = false;
-		if (render) this.render();
+		this.render();
 	}
 
-	toggleBlock(cell, render = true) {
+	toggleBlock(cell) {
 		cell.letter = null;
 		cell.explicitWhite = false;
 		cell.block = !cell.block;
 		cell.mirror.letter = null;
 		cell.mirror.block = cell.block;
 		cell.mirror.explicitWhite = false;
-		if (render) this.render();
+		this.render();
 	}
 
-	toggleExplicitWhite(cell, render = true) {
+	toggleExplicitWhite(cell) {
 		if (cell.mirror.letter) return;
 		cell.letter = null;
 		cell.block = false;
@@ -97,7 +105,7 @@ export default class Grid {
 		cell.mirror.letter = null;
 		cell.mirror.block = false;
 		cell.mirror.explicitWhite = cell.explicitWhite;
-		if (render) this.render();
+		this.render();
 	}
 	
 	// true if there's a cell at {x,y} and it's not a block
