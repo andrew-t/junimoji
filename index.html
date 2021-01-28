@@ -44,7 +44,7 @@
 					<a href="https://github.com/andrew-t/junimoji/">Source code and readme</a>
 				</div>
 			</div>
-			<div class="tab">
+			<div class="options tab">
 				<div class="toggle" tabindex="0">Options</div>
 				<div class="contents">
 					<label>
@@ -73,10 +73,15 @@
 					</label>
 					<p>Highlight words in orange if they're not in a limited dictionary. Some puzzles may include words outside that dictionary but it might help you spot simple typos.</p>
 					<label>
-						<input type="checkbox" id="extra-rules">
-						Highlight islands and two-letter words
+						<input type="checkbox" id="detect-islands">
+						Highlight islands
 					</label>
-					<p>Highlight cells in red if they make a two-letter word or are not connected to the main puzzle.</p>
+					<p>Highlight cells in red if they are not connected to the main puzzle.</p>
+					<label>
+						<input type="checkbox" id="detect-two-letters">
+						Highlight two-letter words
+					</label>
+					<p>Highlight cells in red if they make a two-letter word.</p>
 				</div>
 			</div>
 			<div class="bottom-panel">

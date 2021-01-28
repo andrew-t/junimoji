@@ -1,7 +1,8 @@
 import { classIf, clearClass } from './dom-tools.js';
 import getCheckbox from './checkbox.js';
 
-getCheckbox('extra-rules', true);
+getCheckbox('detect-two-letters', true);
+getCheckbox('detect-islands', true);
 
 export function detectTwoLetterLights(grid) {
 	clearClass('two-letters');

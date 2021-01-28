@@ -78,6 +78,12 @@ body {
 	flex-direction: column;
 }
 
+.options.tab p {
+	color: #666;
+	font-size: 0.8em;
+	margin-top: 0.5em;
+}
+
 #sidebar.collapsed #toggle-sidebar {
 	transform-origin: 0 0;
 	position: absolute;
@@ -289,8 +295,8 @@ body.mobile #keyboard button {
 	background: #fc6 !important;
 	color: red;
 }
-.extra-rules .two-letters,
-.extra-rules .island {
+.detect-two-letters .two-letters,
+.detect-islands .island {
 	background: #f88 !important;
 	color: white;
 }
