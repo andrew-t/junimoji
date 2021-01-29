@@ -6,6 +6,12 @@ export default function checkbox(id, defaultValue, onUpdate) {
 	checkbox.checked = val ? val == 'true' : defaultValue;
 	update();
 	checkbox.addEventListener('click', update);
+	window.addEventListener('storage', e => {
+		const val = localStorage.getItem(id);
+		checkbox.checked = val ? val == 'true' : checkbox.checked;
+		classIf(document.body, id, checkbox.checked);
+		onUpdate?.(checkbox.checked);
+	});
 	return checkbox;
 	function update() {
 		classIf(document.body, id, checkbox.checked);

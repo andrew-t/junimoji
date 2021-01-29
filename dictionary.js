@@ -16,6 +16,13 @@ const storedWords = localStorage.getItem('word-list');
 let wordList = storedWords ? storedWords.split(',') : [...inBuiltWordList],
 	dictionary = new Set(wordList);
 
+window.addEventListener('storage', e => {
+	const storedWords = localStorage.getItem('word-list');
+	wordList = storedWords ? storedWords.split(',') : wordList;
+	dictionary = new Set(wordList);
+	__grid.render();
+});
+
 export default function checkSpelling(grid) {
 	clearClass('misteak');
 	clearClass('repeated-word');
