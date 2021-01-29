@@ -257,14 +257,14 @@ function render(grid) {
 }
 
 function getHash() {
-	const title = titleBox.innerText
-		|| document.getElementById('title-input')?.value
+	const title = document.getElementById('title-input')?.value
+		|| titleBox.innerText
 		|| 'Untitled';
-	const author = authorBox.innerText
-		|| document.getElementById('author-input')?.value
+	const author = document.getElementById('author-input')?.value
+		|| authorBox.innerText
 		|| 'Anonymous';
-	const blurb = blurbBox.innerText
-		|| document.getElementById('blurb-input')?.value
+	const blurb = document.getElementById('blurb-input')?.value
+		|| blurbBox.innerText
 		|| '';
 	return `#${encodeURIComponent(title)};${encodeURIComponent(author)};${encodeURIComponent(blurb)};${grid.toSolvingString(solutionHash)}`;
 }
