@@ -340,3 +340,22 @@ body.mobile #keyboard button {
 
 body.fast-mode #grid-table td.mirror { box-shadow: none !important; }
 body.fast-mode #grid-table td.cursor { box-shadow: none !important; }
+
+.spellcheck ul:empty:after {
+	content: 'Words you make in the grid will appear here.';
+}
+
+.spellcheck ul {
+	list-style: none;
+	padding: 0;
+}
+.spellcheck ul button {
+	float: right;
+}
+.spellcheck li:after {
+	content: '';
+	clear: right;
+	display: block;
+}
+
+#learn-words label { font-size: 0 }

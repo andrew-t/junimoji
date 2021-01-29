@@ -69,11 +69,6 @@
 					</label>
 					<p>A quick way to solve 9&times;9 puzzles on mobile: the only control is tap a square to toggle it being black — the letters will appear when there are the right number of white squares in the subgrid.</p>
 					<label>
-						<input type="checkbox" id="spellcheck">
-						Spellcheck
-					</label>
-					<p>Highlight words in orange if they're not in a limited dictionary. Some puzzles may include words outside that dictionary but it might help you spot simple typos.</p>
-					<label>
 						<input type="checkbox" id="detect-islands">
 						Highlight islands
 					</label>
@@ -88,6 +83,34 @@
 						Highlight repeated words
 					</label>
 					<p>Highlight words in blue if they appear more than once in the grid.</p>
+				</div>
+			</div>
+			<div class="spellcheck tab">
+				<div class="toggle" tabindex="0">Spellcheck</div>
+				<div class="contents">
+					<p>Highlight words in orange if they're not in a limited dictionary. Some puzzles may include words outside that dictionary but it might help you spot simple typos.</p>
+					<label>
+						<input type="checkbox" id="spellcheck">
+						Enable
+					</label>
+					<section>
+						<h3>Words</h3>
+						<ul id="misteaks"></ul>
+					</section>
+					<form id="learn-words">
+						<h3>Replace dictionary</h3>
+						<p>This will replace everything the current dictionary with an uploaded one. It should be one word per line.</p>
+						<label>
+							Upload new wordlist
+							<input type="file" required>
+						</label>
+						<button>Apply</button>
+					</form>
+					<form id="reset-dictionary">
+						<h3>Reset dictionary</h3>
+						<p>This will replace everything the current dictionary with the in-built one.</p>
+						<button>Reset</button>
+					</form>
 				</div>
 			</div>
 			<div class="bottom-panel">
