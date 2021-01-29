@@ -341,7 +341,10 @@ body.mobile #keyboard button {
 body.fast-mode #grid-table td.mirror { box-shadow: none !important; }
 body.fast-mode #grid-table td.cursor { box-shadow: none !important; }
 
-.spellcheck ul:empty:after {
+.spellcheck li {
+	font-family: 'DM Mono', monospace;
+}
+#misteaks:empty:after {
 	content: 'Words you make in the grid will appear here.';
 }
 
@@ -359,3 +362,10 @@ body.fast-mode #grid-table td.cursor { box-shadow: none !important; }
 }
 
 #learn-words label { font-size: 0 }
+
+#schottenator-input {
+	width: 100%;
+	font-family: 'DM Mono', monospace;
+	font-size: 1.3em;
+	text-transform: uppercase;
+}

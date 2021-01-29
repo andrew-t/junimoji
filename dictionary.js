@@ -8,7 +8,9 @@ getCheckbox('detect-repeated-words', false);
 
 const list = document.getElementById('misteaks'),
 	upload = document.getElementById('learn-words'),
-	reset = document.getElementById('reset-dictionary');
+	reset = document.getElementById('reset-dictionary'),
+	lookupInput = document.getElementById('schottenator-input'),
+	lookupOutput = document.getElementById('schottenator-output');
 
 const storedWords = localStorage.getItem('word-list');
 let wordList = storedWords ? storedWords.split(',') : [...inBuiltWordList],
@@ -48,11 +50,7 @@ function check(grid, start, { x, y }, seenWords) {
 			el.classList.add('repeated-word');
 	} else {
 		seenWords[str] = els;
-		li = addEl(list, 'li');
-		const a = addEl(li, 'a');
-		a.setAttribute('href', `https://en.wiktionary.org/wiki/${str.toLowerCase()}`);
-		a.setAttribute('target', '_blank');
-		setText(a, str);
+		li = addWordItem(list, str);
 	}
 	if (!dictionary.has(str)) {
 		for (const el of els)
@@ -109,3 +107,26 @@ reset.addEventListener('submit', e => {
 	localStorage.setItem('word-list', inBuiltWordList);
 	__grid.render();
 });
+
+let t;
+lookupInput.addEventListener('input', e => {
+	if (t) clearTimeout(t);
+	t = setTimeout(() => {
+		setText(lookupOutput, '');
+		const matcher = new RegExp(
+			`^${lookupInput.value.replace(/\?/g, '.')}$`,
+			'ig');
+		for (const word of wordList)
+			if (matcher.test(word))
+				addWordItem(lookupOutput, word);
+	}, 300);
+});
+
+function addWordItem(list, str) {
+	const li = addEl(list, 'li');
+	const a = addEl(li, 'a');
+	a.setAttribute('href', `https://en.wiktionary.org/wiki/${str.toLowerCase()}`);
+	a.setAttribute('target', '_blank');
+	setText(a, str);
+	return li;
+}
