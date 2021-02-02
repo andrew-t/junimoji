@@ -369,3 +369,47 @@ body.fast-mode #grid-table td.cursor { box-shadow: none !important; }
 	font-size: 1.3em;
 	text-transform: uppercase;
 }
+
+.loaded #loading { display: none !important; }
+#loading {
+	display: fixed;
+	background: white;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+	position: absolute;
+	z-index: 10000;
+	font-family: Lato, sans-serif;
+	font-size: 3vmin;
+	line-height: 4.5vmin;
+	color: #522;
+	text-align: center;
+	user-select: none;
+}
+#loading div {
+	width: 5vmin;
+	height: 5vmin;
+	position: absolute;
+	left: calc(50vw - 5vmin);
+	top: calc(50vh - 5vmin);
+	box-sizing: border-box;
+	border: 2px solid #522;
+	animation: blink 1s infinite;
+}
+#loading div:nth-child(1) { transform: translate(-5vmin, -5vmin); animation-delay: 0; }
+#loading div:nth-child(2) { transform: translate(-5vmin, 0); animation-delay: -0.125s; }
+#loading div:nth-child(3) { transform: translate(-5vmin, 5vmin); animation-delay: -0.25s; }
+#loading div:nth-child(4) { transform: translate(0, 5vmin); animation-delay: -0.375s; }
+#loading div:nth-child(5) { background: #522; animation: none; }
+#loading div:nth-child(6) { transform: translate(5vmin, 5vmin); animation-delay: -0.5s; }
+#loading div:nth-child(7) { transform: translate(5vmin, 0); animation-delay: -0.625s; }
+#loading div:nth-child(8) { transform: translate(5vmin, -5vmin); animation-delay: -0.75s; }
+#loading div:nth-child(9) { transform: translate(0, -5vmin); animation-delay: -0.825s; }
+@keyframes blink {
+	from { background: #522; }
+	45% { background: #522; }
+	50% { background: #fee; }
+	to { background: #fee; }
+}
