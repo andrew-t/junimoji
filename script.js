@@ -42,7 +42,7 @@ if (window.location.hash) {
 	const [title, author, blurb] = parts.map(decodeURIComponent);
 	if (title) setText(titleBox, title);
 	if (author) setText(authorBox, author);
-	if (blurb) setText(blurbBox, blurb);
+	if (blurb && blurb != 'Blurb') setText(blurbBox, blurb);
 	document.title = 'Junimoji'
 		+ (title ? ` - "${title}"` : '')
 		+ (author ? ` by ${author}` : '');
@@ -256,16 +256,16 @@ function render(grid) {
 	}
 }
 
+function getValue(inputId, container, defaultValue) {
+	const input = document.getElementById(inputId),
+		value = input ? input.value || defaultValue : titleBox.innerText;
+	return encodeURIComponent(value).replace(/ /g, '+');
+}
+
 function getHash() {
-	const title = document.getElementById('title-input')?.value
-		|| titleBox.innerText
-		|| 'Untitled';
-	const author = document.getElementById('author-input')?.value
-		|| authorBox.innerText
-		|| 'Anonymous';
-	const blurb = document.getElementById('blurb-input')?.value
-		|| blurbBox.innerText
-		|| '';
+	const title = getValue('title-input', titleBox.innerText, 'Untitled');
+	const author = getValue('author-input', authorBox.innerText, 'Anonymous');
+	const blurb = getValue('blurb-input', blurbBox.innerText, '');
 	return `#${encodeURIComponent(title)};${encodeURIComponent(author)};${encodeURIComponent(blurb)};${grid.toSolvingString(solutionHash)}`;
 }
 
