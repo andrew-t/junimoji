@@ -73,6 +73,7 @@ if (window.location.hash) {
 		}
 	grid.render();
 }
+document.body.classList.add('loaded');
 
 function start() {
 	window.__grid = grid; // for debug
