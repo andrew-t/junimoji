@@ -36,8 +36,9 @@ preForm.addEventListener('submit', e => {
 	start();
 });
 
-if (window.location.hash) {
-	const parts = window.location.hash.substr(1).split(';');
+const puzzleString = window.location.search.substr(1) || window.location.hash.substr(1);
+if (puzzleString) {
+	const parts = puzzleString.split(';');
 	const [w,h,a,d,...c] = parts.pop().split(',');
 	const [title, author, blurb] = parts.map(decodeURIComponent);
 	if (title) setText(titleBox, title);
@@ -267,7 +268,7 @@ function getHash() {
 	const title = getValue('title-input', titleBox.innerText, 'Untitled');
 	const author = getValue('author-input', authorBox.innerText, 'Anonymous');
 	const blurb = getValue('blurb-input', blurbBox.innerText, '');
-	return `#${encodeURIComponent(title)};${encodeURIComponent(author)};${encodeURIComponent(blurb)};${grid.toSolvingString(solutionHash)}`;
+	return `?${encodeURIComponent(title)};${encodeURIComponent(author)};${encodeURIComponent(blurb)};${grid.toSolvingString(solutionHash)}`;
 }
 
 function updateLink() {
