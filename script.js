@@ -90,7 +90,6 @@ function start() {
 	preForm.classList.add('hidden');
 	gridTable.addEventListener('keydown', cellKey);
 	if (grid.setting) {
-		progressLink.classList.add('hidden');
 		addInput(titleBox, 'title-input', 'Title', 'Untitled', e => updateLink());
 		addInput(authorBox, 'author-input', 'Author', 'Anonymous', e => updateLink());
 		addTextArea(blurbBox, 'blurb-input', 'Blurb', '', e => updateLink());
@@ -276,12 +275,12 @@ function getJson() {
 	const blurb = getValue('blurb-input', blurbBox, '');
 	return {
 		...grid.toSolvingJson(),
-		title, author, blurb,
-		sh: solutionHash
+		title, author, blurb
 	};
 }
 
 function updateLink(extras) {
+	if (extras?.p) setText(permalink, 'Continue from here');
 	permalink.setAttribute('href', '?' + btoa(JSON.stringify({ ...getJson(), ...extras })));
 }
 
