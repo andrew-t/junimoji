@@ -111,13 +111,17 @@ export default class Grid {
 	// true if there's a cell at {x,y} and it's not a block
 	isOpen(x, y) { return !(this.cells[x]?.[y]?.block ?? true); }
 
-	toSolvingString(solutionHash) {
-		let s = `${this.subGridWidth},${this.subGridHeight},${this.subGridsAcross},${this.subGridsDown},${this.clues.map(c => c.value).join(',')}`;
-		if (solutionHash)
-			s += `/${solutionHash}`;
-		else if (this.mode == Setting && this.percentComplete() == 100)
-			s += `/${this.toHashString()}`;
-		return s;
+	toSolvingJson(solutionHash) {
+		const j = {
+			a: this.subGridsAcross,
+			d: this.subGridsDown,
+			w: this.subGridWidth,
+			h: this.subGridHeight,
+			c: this.clues.map(c => c.value)
+		};
+		if (solutionHash) j.sh = solutionHash;
+		else if (this.mode == Setting && this.percentComplete() == 100) j.sh = this.toHashString();
+		return j;
 	}
 
 	toProgressString() {

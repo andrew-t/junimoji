@@ -38,37 +38,46 @@ preForm.addEventListener('submit', e => {
 
 const puzzleString = window.location.search.substr(1) || window.location.hash.substr(1);
 if (puzzleString) {
-	const parts = puzzleString.split(';');
-	const [w,h,a,d,...c] = parts.pop().split(',');
-	const [title, author, blurb] = parts.map(decodeURIComponent);
-	if (title) setText(titleBox, title);
-	if (author) setText(authorBox, author);
-	if (blurb && blurb != 'Blurb') setText(blurbBox, blurb);
+	let j;
+	try {
+		j = JSON.parse(atob(puzzleString));
+	} catch {
+		const parts = puzzleString.split(';');
+		const [w, h, a, d, ...c] = parts.pop().split(',');
+		const [title, author, blurb] = parts.map(decodeURIComponent);
+		const p = c.length > a * d ? c.pop() : undefined;
+		j = {
+			w: parseInt(w, 10),
+			h: parseInt(h, 10),
+			a: parseInt(a, 10),
+			d: parseInt(d, 10),
+			title, author, blurb,
+			c: c.map(c => c.split('/')[0]),
+			sh: c.map(c => c.split('/')[1]).find(h => h),
+			p
+		};
+	}
+	console.log("Starting puzzle", j);
+	if (j.title) setText(titleBox, j.title);
+	if (j.author) setText(authorBox, j.author);
+	if (j.blurb && blurb != 'Blurb') setText(blurbBox, j.blurb);
 	document.title = 'Junimoji'
-		+ (title ? ` - "${title}"` : '')
-		+ (author ? ` by ${author}` : '');
-	grid = new Grid(
-		parseInt(a, 10),
-		parseInt(d, 10),
-		parseInt(w, 10),
-		parseInt(h, 10),
-		SolvingPreset,
-		render
-	);
+		+ (j.title ? ` - "${j.title}"` : '')
+		+ (j.author ? ` by ${j.author}` : '');
+	grid = new Grid(j.a, j.d, j.w, j.h, SolvingPreset, render);
 	start();
+	solutionHash = j.sh;
 	for (const clue of grid.clues) {
 		const { i, el } = clue;
-		const [ clueValue, _solutionHash ] = c[i].split('/');
-		if (_solutionHash) solutionHash = _solutionHash;
+		const clueValue = j.c[i];
 		clue.value = clueValue;
 		if (el.tagName == "SPAN")
 			setText(el, clueValue);
 		else el.value = clueValue;
 	}
-	const progress = c[grid.clues.length];
-	if (progress)
+	if (j.p)
 		for (const cell of grid.eachCell()) {
-			const p = progress[cell.x + cell.y * grid.totalWidth];
+			const p = j.p[cell.x + cell.y * grid.totalWidth];
 			if (p == '=') cell.block = true;
 			else if (/[A-Z]/i.test(p)) cell.letter = p;
 		}
@@ -82,9 +91,9 @@ function start() {
 	gridTable.addEventListener('keydown', cellKey);
 	if (grid.setting) {
 		progressLink.classList.add('hidden');
-		addInput(titleBox, 'title-input', 'Title', 'Untitled', updateLink);
-		addInput(authorBox, 'author-input', 'Author', 'Anonymous', updateLink);
-		addTextArea(blurbBox, 'blurb-input', 'Blurb', '', updateLink);
+		addInput(titleBox, 'title-input', 'Title', 'Untitled', e => updateLink());
+		addInput(authorBox, 'author-input', 'Author', 'Anonymous', e => updateLink());
+		addTextArea(blurbBox, 'blurb-input', 'Blurb', '', e => updateLink());
 	} else {
 		defaultText(titleBox, 'Junimoji');
 		defaultText(authorBox, 'unknown author');
@@ -101,7 +110,7 @@ function start() {
 			});
 		}
 		if (grid.solving && !grid.preset)
-			el.addEventListener('change', updateLink);
+			el.addEventListener('change', () => updateLink());
 		clue.el = el;
 	}
 	for (let yi = 0; yi < grid.totalHeight; ++yi) {
@@ -228,11 +237,8 @@ function render(grid) {
 		}
 	}
 	updateProgressSpan(grid);
-	if (grid.solving) {
-		updateLink();
-		progressLink.setAttribute('href', `${getHash()},${grid.toProgressString()}`);
-	}
-	if (grid.setting) updateLink();
+	if (grid.solving) updateLink({ p: grid.toProgressString() });
+	else updateLink();
 	document.querySelector('.cursor')?.classList.remove('cursor');
 	document.querySelector('.current')?.classList.remove('current');
 	document.querySelector('.mirror')?.classList.remove('mirror');
@@ -259,20 +265,23 @@ function render(grid) {
 }
 
 function getValue(inputId, container, defaultValue) {
-	const input = document.getElementById(inputId),
-		value = input ? input.value || defaultValue : container.innerText;
-	return encodeURIComponent(value).replace(/ /g, '+');
+	const input = document.getElementById(inputId);
+	return input ? input.value || defaultValue : container.innerText;
 }
 
-function getHash() {
+function getJson() {
 	const title = getValue('title-input', titleBox, 'Untitled');
 	const author = getValue('author-input', authorBox, 'Anonymous');
 	const blurb = getValue('blurb-input', blurbBox, '');
-	return `?${title};${author};${blurb};${grid.toSolvingString(solutionHash)}`;
+	return {
+		...grid.toSolvingJson(),
+		title, author, blurb,
+		sh: solutionHash
+	};
 }
 
-function updateLink() {
-	permalink.setAttribute('href', getHash());
+function updateLink(extras) {
+	permalink.setAttribute('href', '?' + btoa(JSON.stringify({ ...getJson(), ...extras })));
 }
 
 getCheckbox('hide-mirror', false);
