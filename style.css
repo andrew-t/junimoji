@@ -241,7 +241,7 @@ body:not(.hide-mirror) #grid td.mirror { box-shadow: 0 0 0 2px inset #ff880088; 
 }
 
 #permalink { display: none; }
-#permalink[href^="#"] { display: block; }
+#permalink[href^="#"], #permalink[href^="?"] { display: block; }
 
 #keyboard { display: none; }
 #grid-table:not(:focus) td { box-shadow: none !important; }
