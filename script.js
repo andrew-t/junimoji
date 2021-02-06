@@ -268,7 +268,7 @@ function getHash() {
 	const title = getValue('title-input', titleBox.innerText, 'Untitled');
 	const author = getValue('author-input', authorBox.innerText, 'Anonymous');
 	const blurb = getValue('blurb-input', blurbBox.innerText, '');
-	return `?${encodeURIComponent(title)};${encodeURIComponent(author)};${encodeURIComponent(blurb)};${grid.toSolvingString(solutionHash)}`;
+	return `?${title};${author};${blurb};${grid.toSolvingString(solutionHash)}`;
 }
 
 function updateLink() {
