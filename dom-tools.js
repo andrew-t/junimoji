@@ -49,4 +49,5 @@ export function addButton(parent, label, callback) {
 	const button = addEl(parent, 'button');
 	setText(button, label);
 	button.addEventListener('click', callback);
+	return button;
 }

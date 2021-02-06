@@ -297,14 +297,24 @@ body.mobile #keyboard {
 }
 body.mobile #keyboard button {
 	border: none;
-	border-bottom: 4px solid #bbb;
+	border-bottom: 4px solid #cbb;
 	border-radius: 0.5rem;
 	font-size: 1.5rem;
 	height: 3rem;
 	flex-grow: 1;
 	margin: 0.25rem 0.25rem;
 	min-width: 3rem;
+	background: #fee;
+}
+body.mobile #keyboard.wrong button {
+	color: red;
+}
+body.mobile #keyboard button.letter {
 	background: #eee;
+	border-bottom: 4px solid #bbb;
+}
+body.mobile #keyboard button.letter + button:not(.letter) {
+	break-before: always;
 }
 
 /* rotate the board! */
