@@ -260,7 +260,7 @@ function render(grid) {
 
 function getValue(inputId, container, defaultValue) {
 	const input = document.getElementById(inputId),
-		value = input ? input.value || defaultValue : titleBox.innerText;
+		value = input ? input.value || defaultValue : container.innerText;
 	return encodeURIComponent(value).replace(/ /g, '+');
 }
 
