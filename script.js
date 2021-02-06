@@ -265,9 +265,9 @@ function getValue(inputId, container, defaultValue) {
 }
 
 function getHash() {
-	const title = getValue('title-input', titleBox.innerText, 'Untitled');
-	const author = getValue('author-input', authorBox.innerText, 'Anonymous');
-	const blurb = getValue('blurb-input', blurbBox.innerText, '');
+	const title = getValue('title-input', titleBox, 'Untitled');
+	const author = getValue('author-input', authorBox, 'Anonymous');
+	const blurb = getValue('blurb-input', blurbBox, '');
 	return `?${title};${author};${blurb};${grid.toSolvingString(solutionHash)}`;
 }
 
