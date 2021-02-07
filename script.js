@@ -58,16 +58,18 @@ if (puzzleString) {
 		};
 	}
 	console.log("Starting puzzle", j);
-	if (j.title) setText(titleBox, j.title);
-	if (j.author) setText(authorBox, j.author);
-	if (j.blurb && blurb != 'Blurb') setText(blurbBox, j.blurb);
+	if (j.c) {
+		if (j.title) setText(titleBox, j.title);
+		if (j.author) setText(authorBox, j.author);
+		if (j.blurb && blurb != 'Blurb') setText(blurbBox, j.blurb);
+	}
 	document.title = 'Junimoji'
 		+ (j.title ? ` - "${j.title}"` : '')
 		+ (j.author ? ` by ${j.author}` : '');
-	grid = new Grid(j.a, j.d, j.w, j.h, SolvingPreset, render);
-	start();
+	grid = new Grid(j.a, j.d, j.w, j.h, j.c ? SolvingPreset : Setting, render);
+	start(j);
 	solutionHash = j.sh;
-	for (const clue of grid.clues) {
+	if (j.c) for (const clue of grid.clues) {
 		const { i, el } = clue;
 		const clueValue = j.c[i];
 		clue.value = clueValue;
@@ -85,14 +87,14 @@ if (puzzleString) {
 }
 document.body.classList.add('loaded');
 
-function start() {
+function start(j = {}) {
 	window.__grid = grid; // for debug
 	preForm.classList.add('hidden');
 	gridTable.addEventListener('keydown', cellKey);
 	if (grid.setting) {
-		addInput(titleBox, 'title-input', 'Title', 'Untitled', e => updateLink());
-		addInput(authorBox, 'author-input', 'Author', 'Anonymous', e => updateLink());
-		addTextArea(blurbBox, 'blurb-input', 'Blurb', '', e => updateLink());
+		addInput(titleBox, 'title-input', 'Title', j.title ?? 'Untitled', e => updateLink());
+		addInput(authorBox, 'author-input', 'Author', j.author ?? 'Anonymous', e => updateLink());
+		addTextArea(blurbBox, 'blurb-input', 'Blurb', j.blurb ?? '', e => updateLink());
 	} else {
 		defaultText(titleBox, 'Junimoji');
 		defaultText(authorBox, 'unknown author');
@@ -236,8 +238,7 @@ function render(grid) {
 		}
 	}
 	updateProgressSpan(grid);
-	if (grid.solving) updateLink({ p: grid.toProgressString() });
-	else updateLink();
+	updateLink();
 	document.querySelector('.cursor')?.classList.remove('cursor');
 	document.querySelector('.current')?.classList.remove('current');
 	document.querySelector('.mirror')?.classList.remove('mirror');
@@ -274,14 +275,16 @@ function getJson() {
 	const author = getValue('author-input', authorBox, 'Anonymous');
 	const blurb = getValue('blurb-input', blurbBox, '');
 	return {
-		...grid.toSolvingJson(),
+		...grid.toSolvingJson(solutionHash),
 		title, author, blurb
 	};
 }
 
-function updateLink(extras) {
-	if (extras?.p) setText(permalink, 'Continue from here');
-	permalink.setAttribute('href', '?' + btoa(JSON.stringify({ ...getJson(), ...extras })));
+function updateLink() {
+	if (grid.mode != Setting) setText(permalink, 'Continue from here');
+	else if (grid.percentComplete() == 100) setText(permalink, 'Link for solvers');
+	else setText(permalink, 'Continue setting from here');
+	permalink.setAttribute('href', '?' + btoa(JSON.stringify(getJson())));
 }
 
 getCheckbox('hide-mirror', false);

@@ -112,15 +112,17 @@ export default class Grid {
 	isOpen(x, y) { return !(this.cells[x]?.[y]?.block ?? true); }
 
 	toSolvingJson(solutionHash) {
+		const done = this.percentComplete() == 100;
 		const j = {
 			a: this.subGridsAcross,
 			d: this.subGridsDown,
 			w: this.subGridWidth,
 			h: this.subGridHeight,
-			c: this.clues.map(c => c.value)
+			c: (this.mode != Setting || done) ? this.clues.map(c => c.value) : undefined,
+			p: done ? undefined : this.toProgressString()
 		};
 		if (solutionHash) j.sh = solutionHash;
-		else if (this.mode == Setting && this.percentComplete() == 100) j.sh = this.toHashString();
+		else if (this.mode == Setting && done) j.sh = this.toHashString();
 		return j;
 	}
 
