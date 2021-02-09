@@ -40,7 +40,7 @@ const puzzleString = window.location.search.substr(1) || window.location.hash.su
 if (puzzleString) {
 	let j;
 	try {
-		j = JSON.parse(atob(puzzleString));
+		j = JSON.parse(atob(puzzleString.replace(/=+$/, '')));
 	} catch {
 		const parts = puzzleString.split(';');
 		const [w, h, a, d, ...c] = parts.pop().split(',');
