@@ -8,6 +8,8 @@ import getCheckbox from './checkbox.js';
 import checkSpelling from './dictionary.js';
 
 const preForm = document.getElementById('before'),
+	symmetrySelect = document.getElementById('symmetry'),
+	symmetrySpan = document.getElementById('symmetry-span'),
 	gridEl = document.getElementById('grid'),
 	clueList = document.getElementById('clues'),
 	titleBox = document.getElementById('title'),
@@ -24,15 +26,23 @@ const preForm = document.getElementById('before'),
 
 let grid, cursorX = 0, cursorY = 0, solutionHash;
 
+const squareSymmetries = new Set(['90', 'diag', 'antidiag', '2diag', 'hv2diag']);
 preForm.addEventListener('submit', e => {
 	e.preventDefault();
+	const w = inputInt('subgrids-across') * inputInt('subgrid-width'),
+		h = inputInt('subgrids-down') * inputInt('subgrid-height');
+	if (squareSymmetries.has(symmetrySelect.value) && (w != h)) {
+		alert("The selected symmetry mode requires a square grid.");
+		return;
+	}
 	grid = new Grid(
 		inputInt('subgrids-across'),
 		inputInt('subgrids-down'),
 		inputInt('subgrid-width'),
 		inputInt('subgrid-height'),
 		solveTickbox.checked ? Solving : Setting,
-		render);
+		render,
+		symmetrySelect.value);
 	start();
 });
 
@@ -66,7 +76,8 @@ if (puzzleString) {
 	document.title = 'Junimoji'
 		+ (j.title ? ` - "${j.title}"` : '')
 		+ (j.author ? ` by ${j.author}` : '');
-	grid = new Grid(j.a, j.d, j.w, j.h, j.c ? SolvingPreset : Setting, render);
+	grid = new Grid(j.a, j.d, j.w, j.h, j.c ? SolvingPreset : Setting, render, j.s);
+	if (j.s && j.s != '180') symmetrySpan.classList.add('hidden');
 	start(j);
 	solutionHash = j.sh;
 	if (j.c) for (const clue of grid.clues) {
@@ -199,7 +210,8 @@ function cellKey(e) {
 			grid.emptyCell(cell);
 			break;
 		case 'Enter':
-			moveCursor(cell.mirror.x, cell.mirror.y);
+			if (cell.mirrors.length == 1)
+				moveCursor(cell.mirrors[0].x, cell.mirrors[0].y);
 			break;
 		case '.':
 			grid.toggleExplicitWhite(cell);
@@ -223,7 +235,7 @@ function render(grid) {
 		} else {
 			cell.el.classList.remove('block');
 			setText(cell.el, cell.letter || (
-				(cell.explicitWhite || cell.mirror.letter)
+				(cell.explicitWhite || cell.mirrors.some(m => m.letter))
 					? '•' : ''));
 		}
 	}
@@ -241,10 +253,10 @@ function render(grid) {
 	updateLink();
 	document.querySelector('.cursor')?.classList.remove('cursor');
 	document.querySelector('.current')?.classList.remove('current');
-	document.querySelector('.mirror')?.classList.remove('mirror');
+	for (const el of [...document.querySelectorAll('.mirror')]) el.classList.remove('mirror');
 	const cell = grid.cell(cursorX, cursorY);
 	cell.el.classList.add('cursor');
-	cell.mirror.el.classList.add('mirror');
+	for (const mirror of cell.mirrors) mirror.el.classList.add('mirror');
 	const clue = grid.clues[cell.subgrid];
 	clue.el.classList.add('current');
 	keyboard.innerHTML = '';

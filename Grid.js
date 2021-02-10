@@ -6,7 +6,8 @@ export default class Grid {
 	constructor(
 		subGridsAcross, subGridsDown,
 		subGridWidth, subGridHeight,
-		mode, renderer
+		mode, renderer,
+		symmetry
 	) {
 		this.subGridsAcross = subGridsAcross;
 		this.subGridsDown = subGridsDown;
@@ -16,6 +17,7 @@ export default class Grid {
 		this.totalHeight = subGridHeight * subGridsDown;
 		this.mode = mode;
 		this.renderer = renderer;
+		this.symmetry = symmetry;
 
 		this.clues = [];
 		for (let y = 0; y < subGridsAcross; ++y)
@@ -37,16 +39,68 @@ export default class Grid {
 					subgrid: ~~(yi / subGridHeight) * subGridsAcross
 						+ ~~(xi / subGridWidth),
 					block: false,
-					letter: null
+					letter: null,
+					mirrors: []
 				};
 				this.clues[cell.subgrid].cells.push(cell);
 			}
+		switch (symmetry) {
+			default: if (symmetry) {
+				alert("Unknown symmetry: " + symmetry);
+				throw new Error("Unknown symmetry: " + symmetry);
+			} // otherwise fall through
+			case '180':
+				this.addMirrors((x, y) => ({ x: this.totalWidth - 1 - x, y: this.totalHeight - 1 - y }));
+				break;
+			case '90':
+				this.addMirrors((x, y) => ({ x: y, y: this.totalWidth - 1 - x }));
+				this.addMirrors((x, y) => ({ x: this.totalWidth - 1 - x, y: this.totalHeight - 1 - y }));
+				this.addMirrors((x, y) => ({ x: this.totalHeight - 1 - y, y: x }));
+				break;
+			case 'h':
+				this.addMirrors((x, y) => ({ x: this.totalWidth - 1 - x, y }));
+				break;
+			case 'v':
+				this.addMirrors((x, y) => ({ x, y: this.totalHeight - 1 - y }));
+				break;
+			case 'hv':
+				this.addMirrors((x, y) => ({ x: this.totalWidth - 1 - x, y }));
+				this.addMirrors((x, y) => ({ x, y: this.totalHeight - 1 - y }));
+				this.addMirrors((x, y) => ({ x: this.totalWidth - 1 - x, y: this.totalHeight - 1 - y }));
+				break;
+			case 'diag':
+				this.addMirrors((x, y) => ({ x: y, y: x }));
+				break;
+			case 'antidiag':
+				this.addMirrors((x, y) => ({ x: this.totalHeight - 1 - y, y: this.totalWidth - 1 - x }));
+				break;
+			case '2diag':
+				this.addMirrors((x, y) => ({ x: y, y: x }));
+				this.addMirrors((x, y) => ({ x: this.totalHeight - 1 - y, y: this.totalWidth - 1 - x }));
+				this.addMirrors((x, y) => ({ x: this.totalWidth - 1 - x, y: this.totalHeight - 1 - y }));
+				break;
+			case 'hv2diag':
+				this.addMirrors((x, y) => ({ x: this.totalWidth - 1 - x, y }));
+				this.addMirrors((x, y) => ({ x: y, y: this.totalWidth - 1 - x }));
+				this.addMirrors((x, y) => ({ x, y: this.totalHeight - 1 - y }));
+				this.addMirrors((x, y) => ({ x: this.totalHeight - 1 - y, y: x }));
+				this.addMirrors((x, y) => ({ x: this.totalWidth - 1 - x, y: this.totalHeight - 1 - y }));
+				this.addMirrors((x, y) => ({ x: y, y: x }));
+				this.addMirrors((x, y) => ({ x: this.totalHeight - 1 - y, y: this.totalWidth - 1 - x }));
+				break;
+			case 'none': break;
+		}
+	}
+
+	addMirrors(tf) {
 		for (let yi = 0; yi < this.totalHeight; ++yi)
-			for (let xi = 0; xi < this.totalWidth; ++xi)
-				this.cell(xi, yi).mirror = this.cell(
-					this.totalWidth - 1 - xi,
-					this.totalHeight - 1 - yi
-				);
+			for (let xi = 0; xi < this.totalWidth; ++xi) {
+				const cell = this.cell(xi, yi),
+					{ x, y } = tf(xi, yi),
+					mirror = this.cell(x, y);
+				if (!mirror) throw new Error("Mirror algorithm failed");
+				if (mirror != cell) cell.mirrors.push(mirror);
+			}
 	}
 
 	cell(x, y) { return this.cells[x]?.[y]; }
@@ -73,8 +127,10 @@ export default class Grid {
 		cell.letter = letter;
 		cell.explicitWhite = false;
 		cell.block = false;
-		cell.mirror.block = false;
-		cell.mirror.explicitWhite = false;
+		for (const mirror of cell.mirrors) {
+			mirror.block = false;
+			mirror.explicitWhite = false;
+		}
 		this.render();
 	}
 
@@ -82,8 +138,10 @@ export default class Grid {
 		cell.letter = null;
 		cell.explicitWhite = false;
 		cell.block = false;
-		cell.mirror.block = false;
-		cell.mirror.explicitWhite = false;
+		for (const mirror of cell.mirrors) {
+			mirror.block = false;
+			mirror.explicitWhite = false;
+		}
 		this.render();
 	}
 
@@ -91,20 +149,24 @@ export default class Grid {
 		cell.letter = null;
 		cell.explicitWhite = false;
 		cell.block = !cell.block;
-		cell.mirror.letter = null;
-		cell.mirror.block = cell.block;
-		cell.mirror.explicitWhite = false;
+		for (const mirror of cell.mirrors) {
+			mirror.letter = null;
+			mirror.block = cell.block;
+			mirror.explicitWhite = false;
+		}
 		this.render();
 	}
 
 	toggleExplicitWhite(cell) {
-		if (cell.mirror.letter) return;
+		if (cell.mirrors[0]?.letter) return;
 		cell.letter = null;
 		cell.block = false;
 		cell.explicitWhite = !cell.explicitWhite;
-		cell.mirror.letter = null;
-		cell.mirror.block = false;
-		cell.mirror.explicitWhite = cell.explicitWhite;
+		for (const mirror of cell.mirrors) {
+			mirror.letter = null;
+			mirror.block = false;
+			mirror.explicitWhite = cell.explicitWhite;
+		}
 		this.render();
 	}
 	
@@ -119,7 +181,8 @@ export default class Grid {
 			w: this.subGridWidth,
 			h: this.subGridHeight,
 			c: (this.mode != Setting || done) ? this.clues.map(c => c.value) : undefined,
-			p: done ? undefined : this.toProgressString()
+			p: done ? undefined : this.toProgressString(),
+			s: this.symmetry,
 		};
 		if (solutionHash) j.sh = solutionHash;
 		else if (this.mode == Setting && done) j.sh = this.toHashString();
@@ -150,7 +213,7 @@ export default class Grid {
 				continue;
 			if (cell.letter)
 				txt += cell.letter.toUpperCase();
-			else if (cell.explicitWhite || cell.mirror.letter)
+			else if (cell.explicitWhite || cell.mirrors[0]?.letter)
 				txt += '•';
 			else
 				txt += ' ';

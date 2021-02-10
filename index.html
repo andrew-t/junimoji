@@ -22,6 +22,21 @@
 		<label><span>Subgrid height</span><input id="subgrid-height" type="number" value="3" min="0"></label>
 		<label><span>Subgrids across</span><input id="subgrids-across" type="number" value="3" min="0"></label>
 		<label><span>Subgrids down</span><input id="subgrids-down" type="number" value="3" min="0"></label>
+		<label>
+			<span>Grid symmetry</span>
+			<select id="symmetry">
+				<option value="180">Twofold rotational (normal)</option>
+				<option value="90">Fourfold rotational</option>
+				<option value="h">Horizontal</option>
+				<option value="v">Vertical</option>
+				<option value="hv">Horizontal and vertical</option>
+				<option value="diag">Diagonal</option>
+				<option value="antidiag">Antidiagonal</option>
+				<option value="2diag">Diagonal and antidiagonal</option>
+				<option value="hv2diag">All of the above</option>
+				<option value="none">No symmetry</option>
+			</select>
+		</label>
 		<label id="solve-label"><input type="checkbox" id="solve"><span>Solve (rather than set) — note that setting requires a physical keyboard</span></label>
 		<button>Start</button>
 	</form>
@@ -44,7 +59,9 @@
 						and enter them using the space bar.
 						The completed crossword will be a valid grid,
 						i.e., all words will be in the dictionary,
-						the grid will have twofold rotational symmetry,
+						<span id="symmetry-span">
+							the grid will have twofold rotational symmetry,
+						</span>
 						all words will be connected to each other,
 						and there will be no two-letter words.
 						For each subgrid, you have been given the letters that go there,
