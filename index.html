@@ -18,13 +18,22 @@
 		<div>U</div>
 	</div>
 	<form id="before">
+		<h1>Junimoji</h1>
+		<p>
+			<a href="https://twitter.com/junimojis">Junimoji</a> is a puzzle invented by <a href="https://twitter.com/frizfrizzle">Friz</a>. If you don’t know how they work, <a href="https://www.youtube.com/watch?v=5FMgZE9nDvw">watch Friz’ introduction video</a>.
+		</p>
+		<h2>Find a Junimoji to solve</h2>
+		<p>
+			New Junimojis are posted on <a href="https://twitter.com/junimojis">the Twitter feed</a> so check there for one to solve. (They mostly send you back here.)
+		</p>
+		<h2>Set a Junimoji</h2>
+		<p>(Or enter clues to solve you’ve found that doesn’t have a link.)</p>
 		<label><span>Subgrid width</span><input id="subgrid-width" type="number" value="3" min="0"></label>
 		<label><span>Subgrid height</span><input id="subgrid-height" type="number" value="3" min="0"></label>
 		<label><span>Subgrids across</span><input id="subgrids-across" type="number" value="3" min="0"></label>
 		<label><span>Subgrids down</span><input id="subgrids-down" type="number" value="3" min="0"></label>
 		<label>
-			<span>Grid symmetry</span>
-			<select id="symmetry">
+			<span>Grid symmetry</span><select id="symmetry">
 				<option value="180">Twofold rotational (normal)</option>
 				<option value="90">Fourfold rotational</option>
 				<option value="h">Horizontal</option>
@@ -37,7 +46,9 @@
 				<option value="none">No symmetry</option>
 			</select>
 		</label>
-		<label id="solve-label"><input type="checkbox" id="solve"><span>Solve (rather than set) — note that setting requires a physical keyboard</span></label>
+		<label id="solve-label">
+			<input type="checkbox" id="solve"><span>Solve (rather than set)</span>
+		</label>
 		<button>Start</button>
 	</form>
 	<div id="main">
