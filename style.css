@@ -316,6 +316,17 @@ body.mobile #keyboard button.letter {
 body.mobile #keyboard button.letter + button:not(.letter) {
 	break-before: always;
 }
+body.mobile #keyboard .mobile-setting-row {
+	display: flex;
+	width: 100%;
+}
+body.mobile #keyboard .mobile-setting-row button.letter {
+	flex-shrink: 1;
+	min-width: unset;
+	font-family: 'DM Mono', monospace;
+	font-size: 3vmin;
+	color: black !important;
+}
 
 /* rotate the board! */
 #table-container { perspective: 100vmax; }

@@ -260,8 +260,16 @@ function render(grid) {
 	const clue = grid.clues[cell.subgrid];
 	clue.el.classList.add('current');
 	keyboard.innerHTML = '';
-	for (const letter of clue.value)
-		addButton(keyboard, letter.toUpperCase(), e => grid.setCell(cell, letter)).classList.add('letter');
+	if (grid.mode == Setting)
+		for (const row of ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM']) {
+			const rowEl = addEl(keyboard, 'div');
+			rowEl.classList.add('mobile-setting-row');
+			for (const letter of row)
+				addButton(rowEl, letter, e => grid.setCell(cell, letter)).classList.add('letter');
+		}
+	else
+		for (const letter of clue.value)
+			addButton(keyboard, letter.toUpperCase(), e => grid.setCell(cell, letter)).classList.add('letter');
 	addButton(keyboard, '•', e => grid.toggleExplicitWhite(cell));
 	addButton(keyboard, '⬛', e => grid.toggleBlock(cell));
 	addButton(keyboard, '⌫', e => grid.emptyCell(cell));
