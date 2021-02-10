@@ -138,7 +138,7 @@ function start(j = {}) {
 			cell.el.addEventListener('click', e => {
 				cursorX = cell.x;
 				cursorY = cell.y;
-				if (fastMode.checked) {
+				if (fastMode.checked && grid.mode != Setting) {
 					grid.toggleBlock(cell);
 					for (const clue of grid.clues)
 						if (grid.clueCellsText(clue).length == clue.value.length) {
