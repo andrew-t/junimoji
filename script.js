@@ -7,6 +7,8 @@ import { detectTwoLetterLights, detectIslands } from './extra-rules.js';
 import getCheckbox from './checkbox.js';
 import checkSpelling from './dictionary.js';
 
+let grid, cursorX = 0, cursorY = 0, solutionHash;
+
 const preForm = document.getElementById('before'),
 	symmetrySelect = document.getElementById('symmetry'),
 	symmetrySpan = document.getElementById('symmetry-span'),
@@ -21,10 +23,9 @@ const preForm = document.getElementById('before'),
 	gridTable = document.getElementById('grid-table'),
 	solveTickbox = document.getElementById('solve'),
 	fastMode = getCheckbox('fast-mode', false),
+	coordsMode = getCheckbox('coords', false, updateBackgroundNumbers),
 	permalink = document.getElementById('permalink'),
 	keyboard = document.getElementById('keyboard');
-
-let grid, cursorX = 0, cursorY = 0, solutionHash;
 
 const squareSymmetries = new Set(['90', 'diag', 'antidiag', '2diag', 'hv2diag']);
 preForm.addEventListener('submit', e => {
@@ -111,8 +112,8 @@ function start(j = {}) {
 		defaultText(authorBox, 'unknown author');
 	}
 	for (const clue of grid.clues) {
-		const el = addEl(addEl(clueList, 'li'),
-			(grid.setting || grid.preset) ? 'span' : 'input');
+		const li = addEl(clueList, 'li'),
+			el = addEl(li, (grid.setting || grid.preset) ? 'span' : 'input');
 		el.classList.add('clue-text');
 		if (el.tagName == "INPUT") {
 			el.setAttribute('required', true);
@@ -123,6 +124,8 @@ function start(j = {}) {
 		}
 		if (grid.solving && !grid.preset)
 			el.addEventListener('change', () => updateLink());
+		li.setAttribute('x', clue.cells[0].x / grid.subGridWidth + 1);
+		li.setAttribute('y', clue.cells[1].y / grid.subGridHeight + 1);
 		clue.el = el;
 	}
 	for (let yi = 0; yi < grid.totalHeight; ++yi) {
@@ -152,12 +155,21 @@ function start(j = {}) {
 			});
 		}
 	}
+	updateBackgroundNumbers();
+}
+
+function updateBackgroundNumbers() {
+	if (!grid) return;
+	const useCoords = coordsMode.checked
+		&& grid.subGridsAcross < 10
+		&& grid.subGridsDown < 10;
+	classIf(document.body, 'use-coords', useCoords);
 	for (let x = 0; x < grid.subGridsAcross; ++x)
 		for (let y = 0; y < grid.subGridsDown; ++y) {
-			const backgroundImage = `url(${numberImage(
-				x + y * grid.subGridsAcross + 1,
-				(x ^ y) & 1
-			)})`;
+			const cellNumber = useCoords
+				? (y * 10 + x + 11)
+				: (x + y * grid.subGridsAcross + 1);
+			const backgroundImage = `url(${numberImage(cellNumber, (x ^ y) & 1)})`;
 			for (let u = 0; u < grid.subGridWidth; ++u)
 				for (let v = 0; v < grid.subGridHeight; ++v) {
 					const xx = (u - grid.subGridWidth / 2) * 2,

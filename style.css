@@ -202,11 +202,13 @@ body:not(.hide-mirror) #grid td.mirror { box-shadow: 0 0 0 2px inset #ff880088; 
 	height: 100vh;
 	min-width: 10em;
 	box-sizing: border-box;
+	position: relative;
 }
 
 #clues li {
 	width: 12rem;
 	padding: 0 3em 0 0;
+	min-height: 1.3em;
 }
 #clues {
 	padding: 1em 1em 1em 3em;
@@ -238,6 +240,16 @@ body:not(.hide-mirror) #grid td.mirror { box-shadow: 0 0 0 2px inset #ff880088; 
 #clues .clue-text.wrong {
 	color: red;
 	font-weight: bold;
+}
+
+.use-coords #clues li {
+	list-style: none;
+	position: relative;
+}
+.use-coords #clues li:before {
+	position: absolute;
+	left: -2.4em;
+	content: attr(y) attr(x) '.';
 }
 
 #permalink { display: none; }
