@@ -370,6 +370,12 @@ body.mobile #keyboard .mobile-setting-row button.letter {
 	body:not(.disable-dark-mode) a { color: #88f; }
 	body:not(.disable-dark-mode) a:visited { color: #f8f; }
 }
+body.force-dark-mode { background: black; color: white; }
+body.force-dark-mode .current { background: #880 !important; }
+body.force-dark-mode td { color: black; }
+body.force-dark-mode #sidebar { background: #444; color: white; }
+body.force-dark-mode a { color: #88f; }
+body.force-dark-mode a:visited { color: #f8f; }
 
 body.fast-mode #grid-table td.mirror { box-shadow: none !important; }
 body.fast-mode #grid-table td.cursor { box-shadow: none !important; }
