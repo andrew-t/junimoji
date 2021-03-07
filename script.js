@@ -125,7 +125,7 @@ function start(j = {}) {
 		if (grid.solving && !grid.preset)
 			el.addEventListener('change', () => updateLink());
 		li.setAttribute('x', clue.cells[0].x / grid.subGridWidth + 1);
-		li.setAttribute('y', clue.cells[1].y / grid.subGridHeight + 1);
+		li.setAttribute('y', clue.cells[0].y / grid.subGridHeight + 1);
 		clue.el = el;
 	}
 	for (let yi = 0; yi < grid.totalHeight; ++yi) {

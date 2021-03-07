@@ -20,8 +20,8 @@ export default class Grid {
 		this.symmetry = symmetry;
 
 		this.clues = [];
-		for (let y = 0; y < subGridsAcross; ++y)
-			for (let x = 0; x < subGridsDown; ++x)
+		for (let y = 0; y < subGridsDown; ++y)
+			for (let x = 0; x < subGridsAcross; ++x)
 				this.clues.push({
 					x, y,
 					i: x + y * subGridsAcross,
