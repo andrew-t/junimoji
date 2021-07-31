@@ -3,7 +3,7 @@ import treatWord from './dictionaries/treat-word.js';
 import getCheckbox from './checkbox.js';
 import { setText, addEl, addButton, clearClass } from './dom-tools.js';
 
-getCheckbox('spellcheck', true);
+getCheckbox('spellcheck', false);
 getCheckbox('detect-repeated-words', false);
 
 const list = document.getElementById('misteaks'),
