@@ -285,6 +285,10 @@ function render(grid) {
 	addButton(keyboard, '•', e => grid.toggleExplicitWhite(cell));
 	addButton(keyboard, '⬛', e => grid.toggleBlock(cell));
 	addButton(keyboard, '⌫', e => grid.emptyCell(cell));
+	addButton(keyboard, '↑', e => moveCursor(cursorX, cursorY - 1));
+	addButton(keyboard, '↓', e => moveCursor(cursorX, cursorY + 1));
+	addButton(keyboard, '←', e => moveCursor(cursorX - 1, cursorY));
+	addButton(keyboard, '→', e => moveCursor(cursorX + 1, cursorY));
 	classIf(keyboard, 'wrong', !grid.mightBe(clue));
 	detectTwoLetterLights(grid);
 	detectIslands(grid);
