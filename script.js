@@ -121,7 +121,8 @@ function start(j = {}) {
 				clue.value = el.value;
 				grid.render();
 			});
-		}
+		} else
+			el.addEventListener('click', () => moveCursor(clue.cells[4].x, clue.cells[4].y));
 		if (grid.solving && !grid.preset)
 			el.addEventListener('change', () => updateLink());
 		li.setAttribute('x', clue.cells[0].x / grid.subGridWidth + 1);
