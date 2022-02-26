@@ -1,9 +1,8 @@
-import inBuiltWordList from './dictionaries/dictionary.js';
-import treatWord from './dictionaries/treat-word.js';
+import inBuiltWordList from './words.js';
 import getCheckbox from './checkbox.js';
 import { setText, addEl, addButton, clearClass } from './dom-tools.js';
 
-getCheckbox('spellcheck', false);
+getCheckbox('spellcheck', true);
 getCheckbox('detect-repeated-words', false);
 
 const list = document.getElementById('misteaks'),
@@ -90,7 +89,7 @@ upload.addEventListener('submit', e => {
 	else {
 		const reader = new FileReader();
 		reader.addEventListener('load', e => {
-			const words = reader.result.split('\n').map(treatWord).filter(x => x);
+			const words = reader.result.split('\n').map(treatDictionaryWord).filter(x => x);
 			console.log(words.slice(0, 50));
 			if (words.length > 100) {
 				wordList = words;
@@ -136,4 +135,16 @@ function addWordItem(list, str) {
 	a.setAttribute('target', '_blank');
 	setText(a, str);
 	return li;
+}
+
+function treatDictionaryWord(word) {
+	return word.trim()
+		.toUpperCase()
+		.replace(/[ÉÊÈ]/g, 'E')
+		.replace(/[Ç]/g, 'C')
+		.replace(/[Ñ]/g, 'N')
+		.replace(/[ÛÜ]/g, 'U')
+		.replace(/[ÁÂÄÀÅ]/g, 'A')
+		.replace(/[Ï]/g, 'I')
+		.replace(/[ÓÖ]/g, 'O');
 }
